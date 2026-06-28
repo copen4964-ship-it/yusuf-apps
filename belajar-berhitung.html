@@ -513,6 +513,47 @@
             transform: scale(1.03);
         }
         
+        .custom-name-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .custom-name-input {
+            padding: 12px 16px;
+            font-size: 1.1em;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            outline: none;
+            flex: 1;
+            max-width: 250px;
+            text-align: center;
+        }
+        
+        .custom-name-input:focus {
+            border-color: #764ba2;
+            box-shadow: 0 0 10px rgba(118, 75, 162, 0.3);
+        }
+        
+        .custom-name-btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .custom-name-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
         .high-scores-summary {
             margin-top: 20px;
             padding: 15px;
@@ -833,6 +874,21 @@
                 padding: 6px 12px;
             }
             
+            .custom-name-container {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .custom-name-input {
+                max-width: 100%;
+                font-size: 1em;
+            }
+            
+            .custom-name-btn {
+                width: 100%;
+                padding: 10px;
+            }
+            
             .level-info {
                 font-size: 0.8em;
             }
@@ -897,7 +953,11 @@
                 <button class="user-btn" onclick="selectUser('Yusuf')">👦 Yusuf</button>
                 <button class="user-btn" onclick="selectUser('Musa')">🧒 Musa</button>
                 <button class="user-btn" onclick="selectUser('Aisha')">👧 Aisha</button>
-                <button class="user-btn" onclick="selectUser('Umum')">🌐 Umum</button>
+                <button class="user-btn" onclick="showCustomNameInput()">🌐 Umum / Nama Lain</button>
+            </div>
+            <div class="custom-name-container" id="customNameContainer" style="display: none;">
+                <input type="text" id="customNameInput" class="custom-name-input" placeholder="Masukkan nama..." maxlength="20">
+                <button class="custom-name-btn" onclick="submitCustomName()">✅ OK</button>
             </div>
             <div class="high-scores-summary" id="highScoresSummary">
                 <h3>🏆 Skor Tertinggi Hari Ini</h3>
@@ -1069,19 +1129,50 @@
             playSound('click');
             nextQuestion();
         }
+        
+        function showCustomNameInput() {
+            document.getElementById('customNameContainer').style.display = 'flex';
+            document.getElementById('customNameInput').focus();
+            playSound('click');
+        }
+        
+        function submitCustomName() {
+            const input = document.getElementById('customNameInput');
+            const name = input.value.trim();
+            if (name.length > 0) {
+                selectUser(name);
+                input.value = ''; // Clear input
+            } else {
+                // Shake animation for empty input
+                input.style.animation = 'shake 0.5s';
+                setTimeout(() => input.style.animation = '', 500);
+            }
+        }
+        
+        // Allow Enter key to submit custom name
+        document.getElementById('customNameInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                submitCustomName();
+            }
+        });
 
         function getEmoji(name) {
             switch(name) {
                 case 'Yusuf': return '👦';
                 case 'Musa': return '🧒';
                 case 'Aisha': return '👧';
-                default: return '🌐';
+                default: return '👤'; // Default emoji for custom names
             }
         }
         
         function showHighScoresSummary() {
             const lb = getLeaderboard();
-            const allUsers = ['Yusuf', 'Musa', 'Aisha', 'Umum'];
+            // Get all unique users from leaderboard (including custom names)
+            const defaultUsers = ['Yusuf', 'Musa', 'Aisha', 'Umum'];
+            const customUsers = Object.keys(lb)
+                .map(key => key.split('|')[0])
+                .filter(user => !defaultUsers.includes(user));
+            const allUsers = [...defaultUsers, ...customUsers];
             const modes = ['add', 'subtract', 'multiply', 'divide', 'memory', 'random'];
             const diffs = ['easy', 'medium', 'hard'];
             const modeLabels = { add: '➕ Tambah', subtract: '➖ Kurang', multiply: '✖️ Kali', divide: '➗ Bagi', memory: '🧠 Memori', random: '🎲 Acak' };
