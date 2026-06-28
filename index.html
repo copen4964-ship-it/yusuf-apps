@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎓 YUSUF Apps - Belajar Jadi Seru!</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: #fff;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            color: #667eea;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+        .emoji-big {
+            font-size: 4em;
+            margin: 20px 0;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+        .app-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .app-card {
+            padding: 25px;
+            border-radius: 16px;
+            text-decoration: none;
+            color: #fff;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .app-card.berhitung {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .app-card.english {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        .app-card h2 {
+            font-size: 1.4em;
+            margin-bottom: 8px;
+        }
+        .app-card p {
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+        .features {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .feature {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+        }
+        .footer {
+            margin-top: 30px;
+            color: #999;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 YUSUF Apps</h1>
+        <div class="emoji-big">📚✨</div>
+        <p class="subtitle">Belajar jadi seru untuk anak-anak!</p>
+        
+        <div class="app-cards">
+            <a href="belajar-berhitung.html" class="app-card berhitung">
+                <h2>🔢 Berhitung</h2>
+                <p>Belajar matematika dengan cara yang menyenangkan</p>
+                <div class="features">
+                    <span class="feature">➕ Tambah</span>
+                    <span class="feature">➖ Kurang</span>
+                    <span class="feature">✖️ Kali</span>
+                    <span class="feature">➗ Bagi</span>
+                    <span class="feature">🎲 Acak</span>
+                </div>
+            </a>
+            
+            <a href="belajar-english.html" class="app-card english">
+                <h2>📚 English</h2>
+                <p>Belajar bahasa Inggris dengan cara yang seru</p>
+                <div class="features">
+                    <span class="feature">🖼️ Gambar</span>
+                    <span class="feature">🔄 Translate</span>
+                    <span class="feature">🔤 Spelling</span>
+                    <span class="feature">🎲 Acak</span>
+                </div>
+            </a>
+        </div>
+        
+        <p class="footer">🌊 Dibuat dengan ❤️ untuk anak-anak Indonesia</p>
+    </div>
+</body>
+</html>
