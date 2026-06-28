@@ -694,6 +694,23 @@
         .switch-user-btn:hover {
             background: #bdbdbd;
         }
+        .exit-btn {
+            padding: 8px 15px;
+            background: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin-top: 5px;
+            margin-left: 5px;
+        }
+        .exit-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
         .english-link-btn {
             display: inline-block;
             margin-top: 12px;
@@ -905,6 +922,7 @@
     <div class="container">
         <div class="user-greeting" id="greeting"></div>
         <button class="switch-user-btn" id="switchUserBtn" style="display:none" onclick="switchUser()">👤 Ganti Pemain</button>
+        <button class="exit-btn" id="exitBtn" style="display:none" onclick="exitGame()">🚪 Keluar</button>
         <h1>🔢 YUSUF Berhitung</h1>
         <p class="subtitle">Aplikasi untuk anak-anak belajar berhitung</p>
 
@@ -1041,6 +1059,7 @@
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('leaderboardBtn').style.display = 'block';
             document.getElementById('switchUserBtn').style.display = 'inline-block';
+            document.getElementById('exitBtn').style.display = 'inline-block';
             document.getElementById('greeting').textContent = 'Halo, ' + getEmoji(name) + ' ' + name + '! 👋';
             // Reset session scores
             correctScore = 0;
@@ -1139,6 +1158,7 @@
             document.getElementById('welcomeScreen').style.display = 'flex';
             document.getElementById('leaderboardBtn').style.display = 'none';
             document.getElementById('switchUserBtn').style.display = 'none';
+            document.getElementById('exitBtn').style.display = 'none';
             document.getElementById('greeting').textContent = '';
             document.getElementById('question').textContent = 'Berapa banyak bintang \u2b50 yang ada?';
             document.getElementById('emojis').textContent = '';
@@ -1150,6 +1170,46 @@
             streakScore = 0;
             updateScore();
             showHighScoresSummary();
+        }
+        
+        function exitGame() {
+            // Stop timer
+            stopTimer();
+            
+            // Calculate final score
+            const totalQuestions = correctScore + wrongScore;
+            const accuracy = totalQuestions > 0 ? Math.round((correctScore / totalQuestions) * 100) : 0;
+            
+            // Show exit message with score
+            const feedbackEl = document.getElementById('feedback');
+            feedbackEl.innerHTML = `
+                <div style="text-align:center; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; margin: 10px 0;">
+                    <div style="font-size: 1.5em; margin-bottom: 10px;">📊 Hasil Permainan</div>
+                    <div style="font-size: 1.2em; margin-bottom: 5px;">✅ Benar: ${correctScore} | ❌ Salah: ${wrongScore}</div>
+                    <div style="font-size: 1.1em; margin-bottom: 10px;">🎯 Akurasi: ${accuracy}%</div>
+                    <div style="font-size: 0.9em; opacity: 0.9;">Soal diselesaikan: ${totalQuestions}</div>
+                </div>
+            `;
+            feedbackEl.className = 'feedback';
+            
+            // Highlight correct answer if game was in progress
+            document.querySelectorAll('.choice-btn').forEach(btn => {
+                btn.disabled = true;
+                if (parseInt(btn.textContent) === correctAnswer) {
+                    btn.classList.add('correct');
+                }
+            });
+            
+            // Return to welcome screen after 3 seconds
+            setTimeout(() => {
+                document.getElementById('welcomeScreen').style.display = 'flex';
+                document.getElementById('leaderboardBtn').style.display = 'none';
+                document.getElementById('switchUserBtn').style.display = 'none';
+                document.getElementById('exitBtn').style.display = 'none';
+                document.getElementById('feedback').textContent = '';
+                document.getElementById('feedback').className = 'feedback';
+                showHighScoresSummary();
+            }, 3000);
         }
         // =================== END LEADERBOARD ===================
 
