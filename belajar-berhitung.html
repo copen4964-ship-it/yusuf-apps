@@ -267,6 +267,29 @@
             margin-bottom: 10px;
         }
         
+        .timer {
+            font-size: 1.3em;
+            color: #28a745;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding: 8px 16px;
+            background: #d4edda;
+            border-radius: 20px;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        
+        .timer.warning {
+            color: #dc3545;
+            background: #f8d7da;
+            animation: pulse 0.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
         .level-info {
             font-size: 1em;
             color: #28a745;
@@ -788,6 +811,11 @@
                 font-size: 0.8em;
             }
             
+            .timer {
+                font-size: 1em;
+                padding: 6px 12px;
+            }
+            
             .level-info {
                 font-size: 0.8em;
             }
@@ -923,6 +951,8 @@
 
         <div class="question-counter" id="questionCounter">Soal 1/10</div>
         
+        <div class="timer" id="timer">⏰ 15 detik</div>
+        
         <div class="score-board">
             <div class="score-item">
                 <div class="score-value" id="correctScore">0</div>
@@ -952,6 +982,11 @@
         let questionNumber = 0;
         let questionsPerLevel = 10; // 10 soal per level
         let isAnswering = false; // Flag to prevent multiple clicks
+        
+        // Timer variables
+        let timerInterval = null;
+        let timeLeft = 15; // 15 seconds per question
+        const TIME_LIMITS = { easy: 20, medium: 15, hard: 10 }; // Different times per difficulty
 
         // =================== LEADERBOARD SYSTEM ===================
         const USERS = ['Yusuf', 'Musa', 'Aisha', 'Umum'];
@@ -1163,6 +1198,68 @@
             soundEnabled = !soundEnabled;
             document.querySelector('.sound-toggle').textContent = soundEnabled ? '🔊 Suara: ON' : '🔇 Suara: OFF';
             playSound('click');
+        }
+
+        // =================== TIMER FUNCTIONS ===================
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = TIME_LIMITS[currentDifficulty];
+            updateTimerDisplay();
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 5 && timeLeft > 0) {
+                    // Warning: timer almost up
+                    document.getElementById('timer').classList.add('warning');
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    // Time's up - mark as wrong
+                    if (!isAnswering) {
+                        isAnswering = true;
+                        const feedbackEl = document.getElementById('feedback');
+                        const questionArea = document.querySelector('.question-area');
+                        feedbackEl.textContent = 'Waktu habis! ⏰ Jawaban: ' + correctAnswer;
+                        feedbackEl.className = 'feedback incorrect';
+                        questionArea.classList.add('shake');
+                        setTimeout(() => questionArea.classList.remove('shake'), 500);
+                        wrongScore++;
+                        streakScore = 0;
+                        playSound('incorrect');
+                        updateScore();
+                        
+                        // Highlight correct answer
+                        document.querySelectorAll('.choice-btn').forEach(btn => {
+                            if (parseInt(btn.textContent) === correctAnswer) {
+                                btn.classList.add('correct');
+                            }
+                            btn.disabled = true;
+                        });
+                        
+                        setTimeout(nextQuestion, 2000);
+                    }
+                }
+            }, 1000);
+        }
+        
+        function stopTimer() {
+            clearInterval(timerInterval);
+            document.getElementById('timer').classList.remove('warning');
+        }
+        
+        function updateTimerDisplay() {
+            const timerEl = document.getElementById('timer');
+            if (timerEl) {
+                timerEl.textContent = '⏰ ' + timeLeft + ' detik';
+                if (timeLeft <= 5) {
+                    timerEl.classList.add('warning');
+                } else {
+                    timerEl.classList.remove('warning');
+                }
+            }
         }
 
         function setMode(mode) {
@@ -1476,6 +1573,9 @@
             
             // Generate choice buttons
             generateChoices();
+            
+            // Start timer
+            startTimer();
         }
         
         function generateChoices() {
@@ -1527,6 +1627,9 @@
             // Prevent multiple clicks
             if (isAnswering) return;
             isAnswering = true;
+            
+            // Stop timer
+            stopTimer();
             
             const userAnswer = choice || 0;
             const feedbackEl = document.getElementById('feedback');
