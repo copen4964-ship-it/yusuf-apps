@@ -761,6 +761,7 @@
         const allMemoryEmojis=['🐶','🐱','🐰','🐼','🐨','🦁','🐯','🐸','🐵','🦊','🐻','🐷','🐮','🐔','🐧','🐦'];
         let memoryRevealed=[];
         let memoryMatched=[];
+        let isMemorizing=false;
 
         function startMemoryGame(){
             isMemoryMode=true;
@@ -777,6 +778,7 @@
             memorySequence=[];
             memoryRevealed=[];
             memoryMatched=[];
+            isMemorizing=true;
             for(let i=0;i<seqLen;i++){
                 memorySequence.push(allMemoryEmojis[Math.floor(Math.random()*allMemoryEmojis.length)]);
                 memoryRevealed.push(false);
@@ -797,23 +799,25 @@
                 timerEl.textContent='⏳ '+countdown;
                 if(countdown<=0){
                     clearInterval(ci);
+                    isMemorizing=false;
                     timerEl.textContent='🧠 Giliranmu!';
-                    renderMemoryGame(true);
-                }else if(countdown<=seqLen){
-                    renderMemoryGame(true);
+                    renderMemoryGame();
+                }else{
+                    renderMemoryGame();
                 }
             },1000);
         }
 
-        function renderMemoryGame(hideAfter){
+        function renderMemoryGame(){
             const grid=document.getElementById('memoryGrid');
             grid.innerHTML='';
             memorySequence.forEach((emoji,i)=>{
                 const card=document.createElement('div');
                 card.className='memory-card';
-                if(hideAfter&&memoryPlayerIndex>i)card.classList.add('revealed');
+                const shouldReveal=isMemorizing||memoryPlayerIndex>i;
+                if(shouldReveal)card.classList.add('revealed');
                 if(memoryMatched[i])card.classList.add('matched');
-                card.textContent=(memoryMatched[i]||(hideAfter&&memoryPlayerIndex>i))?emoji:'❓';
+                card.textContent=(memoryMatched[i]||shouldReveal)?emoji:'❓';
                 card.onclick=()=>memoryClick(i);
                 grid.appendChild(card);
             });
