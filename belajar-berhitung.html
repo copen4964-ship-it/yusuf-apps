@@ -19,28 +19,38 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
+            line-height: 1.6;
         }
 
         .container {
             background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
             max-width: 500px;
             width: 100%;
             text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         h1 {
             color: #667eea;
-            margin-bottom: 10px;
-            font-size: 2em;
+            margin-bottom: 8px;
+            font-size: 2.2em;
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
 
         .subtitle {
             color: #666;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             font-size: 1.1em;
+            font-weight: 400;
         }
 
         /* Instruksi untuk anak */
@@ -267,29 +277,6 @@
             margin-bottom: 10px;
         }
         
-        .timer {
-            font-size: 1.3em;
-            color: #28a745;
-            font-weight: bold;
-            margin-bottom: 15px;
-            padding: 8px 16px;
-            background: #d4edda;
-            border-radius: 20px;
-            display: inline-block;
-            transition: all 0.3s;
-        }
-        
-        .timer.warning {
-            color: #dc3545;
-            background: #f8d7da;
-            animation: pulse 0.5s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        
         .level-info {
             font-size: 1em;
             color: #28a745;
@@ -344,15 +331,27 @@
 
         .sound-toggle {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 10px 15px;
+            top: 24px;
+            right: 24px;
+            padding: 12px 18px;
             background: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 50px;
             cursor: pointer;
-            font-size: 1.2em;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            font-size: 1.1em;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .sound-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .sound-toggle:active {
+            transform: scale(0.95);
         }
 
         /* Animasi untuk jawaban benar */
@@ -452,106 +451,86 @@
             align-items: center;
             justify-content: center;
             z-index: 1000;
+            padding: 20px;
         }
 
         .welcome-card {
             background: white;
-            border-radius: 25px;
-            padding: 40px 30px;
-            max-width: 400px;
-            width: 90%;
+            border-radius: 28px;
+            padding: 40px 28px;
+            max-width: 420px;
+            width: 100%;
             text-align: center;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         .welcome-card h1 {
-            font-size: 2.2em;
-            margin-bottom: 5px;
+            font-size: 2.4em;
+            margin-bottom: 8px;
+            font-weight: 700;
         }
 
         .welcome-card .subtitle {
             color: #888;
-            margin-bottom: 25px;
+            margin-bottom: 28px;
+            font-size: 1.1em;
         }
 
         .welcome-card .emoji-big {
-            font-size: 4em;
-            margin: 15px 0;
+            font-size: 4.5em;
+            margin: 20px 0;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         .welcome-card h2 {
             color: #667eea;
-            margin-bottom: 20px;
-            font-size: 1.3em;
+            margin-bottom: 24px;
+            font-size: 1.4em;
+            font-weight: 600;
         }
 
         .user-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
         }
 
         .user-btn {
-            padding: 15px 20px;
+            padding: 18px 24px;
             border: 3px solid #667eea;
             background: white;
             color: #667eea;
-            border-radius: 15px;
-            font-size: 1.2em;
-            font-weight: bold;
+            border-radius: 16px;
+            font-size: 1.25em;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .user-btn:hover {
-            background: #667eea;
-            color: white;
-            transform: scale(1.03);
-        }
-        
-        .custom-name-container {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .custom-name-input {
-            padding: 12px 16px;
-            font-size: 1.1em;
-            border: 3px solid #667eea;
-            border-radius: 10px;
-            outline: none;
-            flex: 1;
-            max-width: 250px;
-            text-align: center;
-        }
-        
-        .custom-name-input:focus {
-            border-color: #764ba2;
-            box-shadow: 0 0 10px rgba(118, 75, 162, 0.3);
-        }
-        
-        .custom-name-btn {
-            padding: 12px 20px;
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
         }
-        
-        .custom-name-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+
+        .user-btn:active {
+            transform: translateY(0);
         }
         
         .high-scores-summary {
@@ -597,24 +576,188 @@
         /* Leaderboard */
         .leaderboard-btn {
             position: fixed;
-            top: 20px;
-            left: 20px;
-            padding: 10px 15px;
-            background: #f57f17;
+            top: 24px;
+            left: 24px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #FF9800, #F57C00);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 50px;
             cursor: pointer;
-            font-size: 1.1em;
-            font-weight: bold;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            font-size: 1em;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
             z-index: 100;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .leaderboard-btn:hover {
-            background: #e65100;
+            transform: scale(1.08);
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.5);
+        }
+
+        .leaderboard-btn:active {
+            transform: scale(0.95);
+        }
+
+        .progress-btn {
+            position: fixed;
+            bottom: 28px;
+            left: 28px;
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            border: none;
+            padding: 18px 28px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.5);
+            z-index: 1000;
+            display: none;
+            transition: all 0.3s ease;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .progress-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.5);
+        }
+
+        .progress-btn:active {
+            transform: scale(0.95);
+        }
+
+        .progress-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        .progress-overlay.show {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .progress-card {
+            background: white;
+            border-radius: 24px;
+            padding: 28px;
+            max-width: 420px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .progress-card h3 {
+            text-align: center;
+            margin-bottom: 24px;
+            color: #4CAF50;
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        .progress-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 18px 12px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 14px;
+            transition: transform 0.2s;
+        }
+
+        .stat-item:hover {
             transform: translateY(-2px);
+        }
+
+        .stat-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .badges-section h4, .history-section h4 {
+            margin: 15px 0 10px;
+            color: #333;
+        }
+
+        .badges-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .badge-item {
+            padding: 8px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            background: #e0e0e0;
+            color: #999;
+        }
+
+        .badge-item.earned {
+            background: linear-gradient(135deg, #FFD700, #FFA000);
+            color: #333;
+        }
+
+        .badge-item small {
+            display: block;
+            font-size: 10px;
+            margin-top: 2px;
+        }
+
+        .history-list {
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            font-size: 12px;
         }
 
         .leaderboard-overlay {
@@ -735,23 +878,6 @@
         .switch-user-btn:hover {
             background: #bdbdbd;
         }
-        .exit-btn {
-            padding: 8px 15px;
-            background: #dc3545;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.85em;
-            font-weight: bold;
-            transition: all 0.3s;
-            margin-top: 5px;
-            margin-left: 5px;
-        }
-        .exit-btn:hover {
-            background: #c82333;
-            transform: translateY(-2px);
-        }
         .english-link-btn {
             display: inline-block;
             margin-top: 12px;
@@ -771,93 +897,114 @@
                 /* Mobile Responsive */
         @media (max-width: 480px) {
             body {
-                padding: 10px;
+                padding: 12px;
+                padding-bottom: 80px;
             }
             
             .container {
-                padding: 15px;
-                border-radius: 15px;
+                padding: 20px 16px;
+                border-radius: 20px;
+                margin-top: 10px;
             }
             
             h1 {
-                margin-bottom: 5px;
-                font-size: 1.5em;
+                margin-bottom: 6px;
+                font-size: 1.6em;
             }
             
             .subtitle {
-                margin-bottom: 10px;
+                margin-bottom: 16px;
+                font-size: 1em;
             }
             
             .instructions {
-                margin-bottom: 15px;
+                margin-bottom: 16px;
+                padding: 14px;
             }
             
             .instructions h3 {
                 font-size: 1em;
+                margin-bottom: 10px;
             }
             
             .instructions li {
-                font-size: 0.85em;
+                font-size: 0.9em;
+                padding: 6px 0;
             }
             
             .mode-selector, .diff-selector {
                 flex-wrap: wrap;
-                gap: 6px;
+                gap: 8px;
+                justify-content: center;
             }
             
             .mode-btn, .diff-btn {
-                padding: 8px 12px;
-                font-size: 0.8em;
+                padding: 10px 14px;
+                font-size: 0.85em;
+                min-width: 70px;
             }
             
             .question-area {
-                margin: 15px 0;
+                margin: 16px 0;
+                padding: 16px;
             }
             
             .question-text {
-                font-size: 1.2em;
+                font-size: 1.3em;
+                margin-bottom: 12px;
             }
             
             .emoji-display {
                 word-break: break-word;
-                line-height: 1.4;
+                line-height: 1.5;
+                font-size: 1.1em;
             }
             
             .score-board {
                 flex-wrap: wrap;
-                gap: 8px;
+                gap: 10px;
+                justify-content: center;
             }
             
             .score-item {
-                min-width: 60px;
+                min-width: 70px;
+                padding: 8px;
+                background: #f8f9fa;
+                border-radius: 10px;
             }
             
             .score-value {
-                font-size: 1.2em;
+                font-size: 1.3em;
             }
             
             .score-label {
-                font-size: 0.7em;
+                font-size: 0.75em;
+                color: #666;
             }
             
             .input-area {
                 flex-direction: column;
-                gap: 10px;
+                gap: 12px;
+                margin-top: 16px;
             }
             
             .input-area input {
                 width: 100%;
-                font-size: 1.2em;
-                padding: 12px;
+                font-size: 1.3em;
+                padding: 14px;
+                border: 2px solid #e0e0e0;
+                border-radius: 12px;
             }
             
             .check-btn {
                 width: 100%;
+                padding: 14px;
+                font-size: 1.1em;
             }
             
             .next-btn {
-                padding: 10px 20px;
-                font-size: 0.9em;
+                padding: 12px 24px;
+                font-size: 1em;
             }
             
             .feedback {
@@ -869,60 +1016,63 @@
                 font-size: 0.8em;
             }
             
-            .timer {
-                font-size: 1em;
-                padding: 6px 12px;
-            }
-            
-            .custom-name-container {
-                flex-direction: column;
-                gap: 8px;
-            }
-            
-            .custom-name-input {
-                max-width: 100%;
-                font-size: 1em;
-            }
-            
-            .custom-name-btn {
-                width: 100%;
-                padding: 10px;
-            }
-            
             .level-info {
                 font-size: 0.8em;
             }
             
             .leaderboard-btn {
-                top: 10px;
-                right: 10px;
-                font-size: 0.7em;
-                padding: 6px 10px;
+                top: 12px;
+                right: 12px;
+                font-size: 0.85em;
+                padding: 10px 16px;
+                border-radius: 25px;
+            }
+            
+            .progress-btn {
+                bottom: 20px;
+                left: 20px;
+                font-size: 1em;
+                padding: 14px 22px;
+                border-radius: 30px;
             }
             
             .sound-toggle {
-                top: 10px;
-                left: 10px;
-                font-size: 0.7em;
-                padding: 6px 10px;
+                top: 12px;
+                left: 12px;
+                font-size: 0.85em;
+                padding: 10px 16px;
+                border-radius: 25px;
             }
             
             .welcome-card, .leaderboard-card {
                 max-width: 95%;
+                padding: 28px 20px;
+                border-radius: 24px;
             }
             
             .welcome-card h1 {
-                font-size: 1.3em;
+                font-size: 1.6em;
+            }
+            
+            .welcome-card .emoji-big {
+                font-size: 3.5em;
+                margin: 15px 0;
+            }
+            
+            .welcome-card h2 {
+                font-size: 1.2em;
+                margin-bottom: 18px;
             }
             
             .user-list {
                 flex-direction: column;
-                gap: 8px;
+                gap: 10px;
             }
             
             .user-btn {
                 width: 100%;
-                padding: 12px;
+                padding: 14px 18px;
+                font-size: 1.1em;
             }
             
             .high-scores-summary {
@@ -936,6 +1086,33 @@
             .high-score-item {
                 padding: 6px 8px;
                 font-size: 0.8em;
+            }
+            
+            .progress-card {
+                padding: 20px 16px;
+                border-radius: 20px;
+            }
+            
+            .progress-card h3 {
+                font-size: 1.3em;
+                margin-bottom: 18px;
+            }
+            
+            .progress-stats {
+                gap: 10px;
+                margin-bottom: 18px;
+            }
+            
+            .stat-item {
+                padding: 14px 10px;
+            }
+            
+            .stat-value {
+                font-size: 22px;
+            }
+            
+            .stat-label {
+                font-size: 0.7em;
             }
         }
         
@@ -953,11 +1130,7 @@
                 <button class="user-btn" onclick="selectUser('Yusuf')">👦 Yusuf</button>
                 <button class="user-btn" onclick="selectUser('Musa')">🧒 Musa</button>
                 <button class="user-btn" onclick="selectUser('Aisha')">👧 Aisha</button>
-                <button class="user-btn" onclick="showCustomNameInput()">🌐 Umum / Nama Lain</button>
-            </div>
-            <div class="custom-name-container" id="customNameContainer" style="display: none;">
-                <input type="text" id="customNameInput" class="custom-name-input" placeholder="Masukkan nama..." maxlength="20">
-                <button class="custom-name-btn" onclick="submitCustomName()">✅ OK</button>
+                <button class="user-btn" onclick="selectUser('Umum')">🌐 Umum</button>
             </div>
             <div class="high-scores-summary" id="highScoresSummary">
                 <h3>🏆 Skor Tertinggi Hari Ini</h3>
@@ -976,13 +1149,19 @@
         </div>
     </div>
 
+    <!-- Progress Overlay -->
+    <div class="progress-overlay" id="progressOverlay">
+        <div class="progress-card" id="progressContent"></div>
+        <button class="lb-close" onclick="closeProgress()">Tutup</button>
+    </div>
+
     <button class="leaderboard-btn" id="leaderboardBtn" style="display:none" onclick="openLeaderboard()">🏆 Skor</button>
+    <button class="progress-btn" id="progressBtn" style="display:none" onclick="showCurrentUserProgress()">📊 Progress</button>
     <button class="sound-toggle" id="soundBtn" onclick="toggleSound()">🔊 Suara: ON</button>
 
     <div class="container">
         <div class="user-greeting" id="greeting"></div>
         <button class="switch-user-btn" id="switchUserBtn" style="display:none" onclick="switchUser()">👤 Ganti Pemain</button>
-        <button class="exit-btn" id="exitBtn" style="display:none" onclick="exitGame()">🚪 Keluar</button>
         <h1>🔢 YUSUF Berhitung</h1>
         <p class="subtitle">Aplikasi untuk anak-anak belajar berhitung</p>
 
@@ -999,18 +1178,18 @@
         </div>
 
         <div class="mode-selector">
-            <button class="mode-btn" onclick="setMode('add')">➕ Tambah</button>
-            <button class="mode-btn" onclick="setMode('subtract')">➖ Kurang</button>
-            <button class="mode-btn" onclick="setMode('multiply')">✖️ Kali</button>
-            <button class="mode-btn" onclick="setMode('divide')">➗ Bagi</button>
-            <button class="mode-btn" onclick="setMode('memory')">🧠 Memori</button>
-            <button class="mode-btn active" onclick="setMode('random')">🎲 Acak</button>
+            <button class="mode-btn" onclick="setMode('add', event)">➕ Tambah</button>
+            <button class="mode-btn" onclick="setMode('subtract', event)">➖ Kurang</button>
+            <button class="mode-btn" onclick="setMode('multiply', event)">✖️ Kali</button>
+            <button class="mode-btn" onclick="setMode('divide', event)">➗ Bagi</button>
+            <button class="mode-btn" onclick="setMode('memory', event)">🧠 Memori</button>
+            <button class="mode-btn active" onclick="setMode('random', event)">🎲 Acak</button>
         </div>
 
         <div id="difficultySection" class="difficulty-selector">
-            <button class="diff-btn active" onclick="setDifficulty('easy')">🌟 Mudah</button>
-            <button class="diff-btn" onclick="setDifficulty('medium')">🌟🌟 Sedang</button>
-            <button class="diff-btn" onclick="setDifficulty('hard')">🌟🌟🌟 Sulit</button>
+            <button class="diff-btn active" onclick="setDifficulty('easy', event)">🌟 Mudah</button>
+            <button class="diff-btn" onclick="setDifficulty('medium', event)">🌟🌟 Sedang</button>
+            <button class="diff-btn" onclick="setDifficulty('hard', event)">🌟🌟🌟 Sulit</button>
         </div>
 
         <div class="question-area">
@@ -1029,8 +1208,6 @@
 
         <div class="question-counter" id="questionCounter">Soal 1/10</div>
         
-        <div class="timer" id="timer">⏰ 15 detik</div>
-        
         <div class="score-board">
             <div class="score-item">
                 <div class="score-value" id="correctScore">0</div>
@@ -1048,7 +1225,27 @@
         <div class="level-info" id="levelInfo">Level: 🌟 Mudah</div>
     </div>
 
-    <script>
+    <script type="module">
+        // Import Firebase
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+        import { getDatabase, ref, get, set, update } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmqIyWKKV5r6NR-90A6MlqZb0WLxWxfcw",
+            authDomain: "yusufbelajar-8154a.firebaseapp.com",
+            databaseURL: "https://yusufbelajar-8154a-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "yusufbelajar-8154a",
+            storageBucket: "yusufbelajar-8154a.firebasestorage.app",
+            messagingSenderId: "910863331954",
+            appId: "1:910863331954:web:db9b0b64cf17157644c8eb",
+            measurementId: "G-JH44C7H074"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
         let currentMode = 'random';
         let currentDifficulty = 'easy';
         let correctAnswer = 0;
@@ -1060,11 +1257,6 @@
         let questionNumber = 0;
         let questionsPerLevel = 10; // 10 soal per level
         let isAnswering = false; // Flag to prevent multiple clicks
-        
-        // Timer variables
-        let timerInterval = null;
-        let timeLeft = 15; // 15 seconds per question
-        const TIME_LIMITS = { easy: 20, medium: 15, hard: 10 }; // Different times per difficulty
 
         // =================== LEADERBOARD SYSTEM ===================
         const USERS = ['Yusuf', 'Musa', 'Aisha', 'Umum'];
@@ -1082,34 +1274,215 @@
             { key: 'hard', label: '🌟🌟🌟 Sulit' }
         ];
 
-        // localStorage only - no server sync needed
-        function getLeaderboard() {
+        let serverScores = null;
+
+        // =================== STREAK & PROGRESS SYSTEM ===================
+        const BADGES = [
+            { id: 'streak3', name: '🔥 Streak 3 Hari', desc: 'Belajar 3 hari berturut-turut', check: (s) => s.streak >= 3 },
+            { id: 'streak7', name: '🔥🔥 Streak Mingguan', desc: 'Belajar 7 hari berturut-turut', check: (s) => s.streak >= 7 },
+            { id: 'streak30', name: '🔥🔥🔥 Streak Bulanan', desc: 'Belajar 30 hari berturut-turut', check: (s) => s.streak >= 30 },
+            { id: 'total100', name: '💯 Centurion', desc: 'Jawab 100 soal benar', check: (s) => s.totalCorrect >= 100 },
+            { id: 'total500', name: '🏅 Master', desc: 'Jawab 500 soal benar', check: (s) => s.totalCorrect >= 500 },
+            { id: 'perfect10', name: '⭐ Perfect 10', desc: '10/10 benar dalam satu sesi', check: (s) => s.perfectSessions >= 1 },
+            { id: 'firstPlay', name: '🎮 First Play', desc: 'Main untuk pertama kali', check: (s) => s.totalSessions >= 1 }
+        ];
+
+        async function getUserStats(user) {
             try {
-                return JSON.parse(localStorage.getItem('yusuf_leaderboard')) || {};
+                const dbRef = ref(db, `stats/${user}`);
+                const snapshot = await get(dbRef);
+                if (snapshot.exists()) {
+                    return snapshot.val();
+                }
+                return {
+                    streak: 0,
+                    lastPlayDate: null,
+                    totalCorrect: 0,
+                    totalWrong: 0,
+                    totalSessions: 0,
+                    perfectSessions: 0,
+                    badges: [],
+                    history: []
+                };
             } catch(e) {
-                return {};
+                console.log('Firebase read failed:', e);
+                return { streak: 0, lastPlayDate: null, totalCorrect: 0, totalWrong: 0, totalSessions: 0, perfectSessions: 0, badges: [], history: [] };
             }
         }
 
-        function saveLeaderboard(lb) {
-            localStorage.setItem('yusuf_leaderboard', JSON.stringify(lb));
+        async function saveUserStats(user, stats) {
+            try {
+                const dbRef = ref(db, `stats/${user}`);
+                await set(dbRef, stats);
+            } catch(e) {
+                console.log('Firebase write failed:', e);
+            }
+        }
+
+        async function recordSession(user, correct, wrong, mode, diff) {
+            const stats = await getUserStats(user);
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Update streak
+            if (stats.lastPlayDate) {
+                const lastDate = new Date(stats.lastPlayDate);
+                const todayDate = new Date(today);
+                const diffTime = todayDate - lastDate;
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                
+                if (diffDays === 1) {
+                    stats.streak++;
+                } else if (diffDays > 1) {
+                    stats.streak = 1;
+                }
+                // diffDays === 0 means same day, don't change streak
+            } else {
+                stats.streak = 1;
+            }
+            stats.lastPlayDate = today;
+            
+            // Update totals
+            stats.totalCorrect += correct;
+            stats.totalWrong += wrong;
+            stats.totalSessions++;
+            if (correct >= 10 && wrong === 0) stats.perfectSessions++;
+            
+            // Add to history (keep last 50 sessions)
+            stats.history.unshift({
+                date: today,
+                mode: mode,
+                diff: diff,
+                correct: correct,
+                wrong: wrong,
+                timestamp: Date.now()
+            });
+            if (stats.history.length > 50) stats.history = stats.history.slice(0, 50);
+            
+            // Check badges
+            const newBadges = [];
+            BADGES.forEach(badge => {
+                if (!stats.badges.includes(badge.id) && badge.check(stats)) {
+                    stats.badges.push(badge.id);
+                    newBadges.push(badge);
+                }
+            });
+            
+            await saveUserStats(user, stats);
+            return { stats, newBadges };
+        }
+
+        function showProgress(user) {
+            if (!user) {
+                alert('Pilih pemain dulu ya! 🎮');
+                return;
+            }
+            getUserStats(user).then(stats => {
+                const progressHTML = `
+                    <div class="progress-card">
+                        <h3>📊 Progress ${getEmoji(user)} ${user}</h3>
+                        <div class="progress-stats">
+                            <div class="stat-item">
+                                <div class="stat-value">🔥 ${stats.streak}</div>
+                                <div class="stat-label">Streak Hari</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">✅ ${stats.totalCorrect}</div>
+                                <div class="stat-label">Benar</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">❌ ${stats.totalWrong}</div>
+                                <div class="stat-label">Salah</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">🎮 ${stats.totalSessions}</div>
+                                <div class="stat-label">Sesi</div>
+                            </div>
+                        </div>
+                        <div class="badges-section">
+                            <h4>🏆 Badge</h4>
+                            <div class="badges-list">
+                                ${BADGES.map(b => `
+                                    <div class="badge-item ${stats.badges.includes(b.id) ? 'earned' : 'locked'}">
+                                        <span>${b.name}</span>
+                                        <small>${b.desc}</small>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div class="history-section">
+                            <h4>📜 Riwayat Terakhir</h4>
+                            <div class="history-list">
+                                ${stats.history.length > 0 ? stats.history.slice(0, 5).map(h => `
+                                    <div class="history-item">
+                                        <span>${h.date}</span>
+                                        <span>${h.mode} (${h.diff})</span>
+                                        <span>✅${h.correct} ❌${h.wrong}</span>
+                                    </div>
+                                `).join('') : '<div class="history-item">Belum ada riwayat</div>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('progressContent').innerHTML = progressHTML;
+                document.getElementById('progressOverlay').classList.add('show');
+            });
+        }
+
+        function closeProgress() {
+            document.getElementById('progressOverlay').classList.remove('show');
+        }
+
+        async function getLeaderboard() {
+            try {
+                const dbRef = ref(db, 'leaderboard');
+                const snapshot = await get(dbRef);
+                if (snapshot.exists()) {
+                    serverScores = snapshot.val();
+                    localStorage.setItem('yusuf_leaderboard', JSON.stringify(serverScores));
+                    return serverScores;
+                } else {
+                    return {};
+                }
+            } catch(e) {
+                console.log('Firebase read failed:', e);
+                if (serverScores) return serverScores;
+                try {
+                    return JSON.parse(localStorage.getItem('yusuf_leaderboard')) || {};
+                } catch(e2) {
+                    return {};
+                }
+            }
+        }
+
+        async function saveLeaderboard(lb) {
+            try {
+                const dbRef = ref(db, 'leaderboard');
+                await set(dbRef, lb);
+                localStorage.setItem('yusuf_leaderboard', JSON.stringify(lb));
+                serverScores = lb;
+            } catch(e) {
+                console.log('Firebase write failed:', e);
+                localStorage.setItem('yusuf_leaderboard', JSON.stringify(lb));
+                serverScores = lb;
+            }
         }
 
         function getScoreKey(user, mode, diff) {
             return user + '|' + mode + '|' + diff;
         }
 
-        function updateLeaderboardScore(user, mode, diff, score) {
-            const lb = getLeaderboard();
+        async function updateLeaderboardScore(user, mode, diff, score) {
+            const lb = await getLeaderboard();
             const key = getScoreKey(user, mode, diff);
             if (!lb[key] || score > lb[key]) {
                 lb[key] = score;
-                saveLeaderboard(lb);
+                await saveLeaderboard(lb);
             }
+            // Firebase sync handled by saveLeaderboard
         }
 
-        function getHighScore(user, mode, diff) {
-            const lb = getLeaderboard();
+        async function getHighScore(user, mode, diff) {
+            const lb = await getLeaderboard();
             return lb[getScoreKey(user, mode, diff)] || 0;
         }
 
@@ -1118,8 +1491,8 @@
             localStorage.setItem('yusuf_current_user', name);
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('leaderboardBtn').style.display = 'block';
+            document.getElementById('progressBtn').style.display = 'block';
             document.getElementById('switchUserBtn').style.display = 'inline-block';
-            document.getElementById('exitBtn').style.display = 'inline-block';
             document.getElementById('greeting').textContent = 'Halo, ' + getEmoji(name) + ' ' + name + '! 👋';
             // Reset session scores
             correctScore = 0;
@@ -1129,50 +1502,19 @@
             playSound('click');
             nextQuestion();
         }
-        
-        function showCustomNameInput() {
-            document.getElementById('customNameContainer').style.display = 'flex';
-            document.getElementById('customNameInput').focus();
-            playSound('click');
-        }
-        
-        function submitCustomName() {
-            const input = document.getElementById('customNameInput');
-            const name = input.value.trim();
-            if (name.length > 0) {
-                selectUser(name);
-                input.value = ''; // Clear input
-            } else {
-                // Shake animation for empty input
-                input.style.animation = 'shake 0.5s';
-                setTimeout(() => input.style.animation = '', 500);
-            }
-        }
-        
-        // Allow Enter key to submit custom name
-        document.getElementById('customNameInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                submitCustomName();
-            }
-        });
 
         function getEmoji(name) {
             switch(name) {
                 case 'Yusuf': return '👦';
                 case 'Musa': return '🧒';
                 case 'Aisha': return '👧';
-                default: return '👤'; // Default emoji for custom names
+                default: return '🌐';
             }
         }
         
-        function showHighScoresSummary() {
-            const lb = getLeaderboard();
-            // Get all unique users from leaderboard (including custom names)
-            const defaultUsers = ['Yusuf', 'Musa', 'Aisha', 'Umum'];
-            const customUsers = Object.keys(lb)
-                .map(key => key.split('|')[0])
-                .filter(user => !defaultUsers.includes(user));
-            const allUsers = [...defaultUsers, ...customUsers];
+        async function showHighScoresSummary() {
+            const lb = await getLeaderboard();
+            const allUsers = ['Yusuf', 'Musa', 'Aisha', 'Umum'];
             const modes = ['add', 'subtract', 'multiply', 'divide', 'memory', 'random'];
             const diffs = ['easy', 'medium', 'hard'];
             const modeLabels = { add: '➕ Tambah', subtract: '➖ Kurang', multiply: '✖️ Kali', divide: '➗ Bagi', memory: '🧠 Memori', random: '🎲 Acak' };
@@ -1248,8 +1590,8 @@
         function switchUser() {
             document.getElementById('welcomeScreen').style.display = 'flex';
             document.getElementById('leaderboardBtn').style.display = 'none';
+            document.getElementById('progressBtn').style.display = 'none';
             document.getElementById('switchUserBtn').style.display = 'none';
-            document.getElementById('exitBtn').style.display = 'none';
             document.getElementById('greeting').textContent = '';
             document.getElementById('question').textContent = 'Berapa banyak bintang \u2b50 yang ada?';
             document.getElementById('emojis').textContent = '';
@@ -1261,46 +1603,6 @@
             streakScore = 0;
             updateScore();
             showHighScoresSummary();
-        }
-        
-        function exitGame() {
-            // Stop timer
-            stopTimer();
-            
-            // Calculate final score
-            const totalQuestions = correctScore + wrongScore;
-            const accuracy = totalQuestions > 0 ? Math.round((correctScore / totalQuestions) * 100) : 0;
-            
-            // Show exit message with score
-            const feedbackEl = document.getElementById('feedback');
-            feedbackEl.innerHTML = `
-                <div style="text-align:center; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; margin: 10px 0;">
-                    <div style="font-size: 1.5em; margin-bottom: 10px;">📊 Hasil Permainan</div>
-                    <div style="font-size: 1.2em; margin-bottom: 5px;">✅ Benar: ${correctScore} | ❌ Salah: ${wrongScore}</div>
-                    <div style="font-size: 1.1em; margin-bottom: 10px;">🎯 Akurasi: ${accuracy}%</div>
-                    <div style="font-size: 0.9em; opacity: 0.9;">Soal diselesaikan: ${totalQuestions}</div>
-                </div>
-            `;
-            feedbackEl.className = 'feedback';
-            
-            // Highlight correct answer if game was in progress
-            document.querySelectorAll('.choice-btn').forEach(btn => {
-                btn.disabled = true;
-                if (parseInt(btn.textContent) === correctAnswer) {
-                    btn.classList.add('correct');
-                }
-            });
-            
-            // Return to welcome screen after 3 seconds
-            setTimeout(() => {
-                document.getElementById('welcomeScreen').style.display = 'flex';
-                document.getElementById('leaderboardBtn').style.display = 'none';
-                document.getElementById('switchUserBtn').style.display = 'none';
-                document.getElementById('exitBtn').style.display = 'none';
-                document.getElementById('feedback').textContent = '';
-                document.getElementById('feedback').className = 'feedback';
-                showHighScoresSummary();
-            }, 3000);
         }
         // =================== END LEADERBOARD ===================
 
@@ -1351,69 +1653,7 @@
             playSound('click');
         }
 
-        // =================== TIMER FUNCTIONS ===================
-        function startTimer() {
-            clearInterval(timerInterval);
-            timeLeft = TIME_LIMITS[currentDifficulty];
-            updateTimerDisplay();
-            
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                updateTimerDisplay();
-                
-                if (timeLeft <= 5 && timeLeft > 0) {
-                    // Warning: timer almost up
-                    document.getElementById('timer').classList.add('warning');
-                }
-                
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    // Time's up - mark as wrong
-                    if (!isAnswering) {
-                        isAnswering = true;
-                        const feedbackEl = document.getElementById('feedback');
-                        const questionArea = document.querySelector('.question-area');
-                        feedbackEl.textContent = 'Waktu habis! ⏰ Jawaban: ' + correctAnswer;
-                        feedbackEl.className = 'feedback incorrect';
-                        questionArea.classList.add('shake');
-                        setTimeout(() => questionArea.classList.remove('shake'), 500);
-                        wrongScore++;
-                        streakScore = 0;
-                        playSound('incorrect');
-                        updateScore();
-                        
-                        // Highlight correct answer
-                        document.querySelectorAll('.choice-btn').forEach(btn => {
-                            if (parseInt(btn.textContent) === correctAnswer) {
-                                btn.classList.add('correct');
-                            }
-                            btn.disabled = true;
-                        });
-                        
-                        setTimeout(nextQuestion, 2000);
-                    }
-                }
-            }, 1000);
-        }
-        
-        function stopTimer() {
-            clearInterval(timerInterval);
-            document.getElementById('timer').classList.remove('warning');
-        }
-        
-        function updateTimerDisplay() {
-            const timerEl = document.getElementById('timer');
-            if (timerEl) {
-                timerEl.textContent = '⏰ ' + timeLeft + ' detik';
-                if (timeLeft <= 5) {
-                    timerEl.classList.add('warning');
-                } else {
-                    timerEl.classList.remove('warning');
-                }
-            }
-        }
-
-        function setMode(mode) {
+        function setMode(mode, event) {
             currentMode = mode;
             questionNumber = 0;
             correctScore = 0;
@@ -1421,7 +1661,7 @@
             streakScore = 0;
             updateScore();
             document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            if (event) event.target.classList.add('active');
             playSound('click');
             document.querySelector('.input-area').style.display = 'flex';
             if (mode === 'memory') {
@@ -1434,7 +1674,7 @@
             }
         }
 
-        function setDifficulty(diff) {
+        function setDifficulty(diff, event) {
             currentDifficulty = diff;
             questionNumber = 0;
             correctScore = 0;
@@ -1442,7 +1682,7 @@
             streakScore = 0;
             updateScore();
             document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            if (event) event.target.classList.add('active');
             playSound('click');
             document.querySelector('.input-area').style.display = 'flex';
             if (currentMode === 'memory') {
@@ -1620,6 +1860,17 @@
                 
                 // Cek level up
                 if (questionNumber >= questionsPerLevel) {
+                    // Record session to database
+                    if (currentUser) {
+                        recordSession(currentUser, correctScore, wrongScore, currentMode, currentDifficulty).then(({ stats, newBadges }) => {
+                            if (newBadges.length > 0) {
+                                // Show badge notification
+                                const badgeNames = newBadges.map(b => b.name).join(', ');
+                                feedbackEl.textContent += ` \n🏅 Badge baru: ${badgeNames}`;
+                            }
+                        });
+                    }
+                    
                     if (correctScore >= 7) {
                         if (currentDifficulty === 'easy') {
                             currentDifficulty = 'medium';
@@ -1724,9 +1975,6 @@
             
             // Generate choice buttons
             generateChoices();
-            
-            // Start timer
-            startTimer();
         }
         
         function generateChoices() {
@@ -1779,9 +2027,6 @@
             if (isAnswering) return;
             isAnswering = true;
             
-            // Stop timer
-            stopTimer();
-            
             const userAnswer = choice || 0;
             const feedbackEl = document.getElementById('feedback');
             const questionArea = document.querySelector('.question-area');
@@ -1812,6 +2057,17 @@
                 
                 // Cek level up
                 if (questionNumber >= questionsPerLevel) {
+                    // Record session to database
+                    if (currentUser) {
+                        recordSession(currentUser, correctScore, wrongScore, currentMode, currentDifficulty).then(({ stats, newBadges }) => {
+                            if (newBadges.length > 0) {
+                                // Show badge notification
+                                const badgeNames = newBadges.map(b => b.name).join(', ');
+                                feedbackEl.textContent += ` \n🏅 Badge baru: ${badgeNames}`;
+                            }
+                        });
+                    }
+                    
                     // Selesai 10 soal, cek apakah layak level up
                     if (correctScore >= 7) {
                         // Level up!
@@ -1899,15 +2155,6 @@
             showHighScoresSummary();
         })();
 
-        // Override check button for memory mode
-        document.querySelector('.check-btn').onclick = function() {
-            if (currentMode === 'memory') {
-                checkMemoryAnswer();
-            } else {
-                checkAnswer();
-            }
-        };
-
         // Note: Enter key support removed - using choice buttons instead
 
         // Resume AudioContext on user interaction (required by browsers)
@@ -1921,6 +2168,30 @@
         document.getElementById('leaderboardOverlay').addEventListener('click', (e) => {
             if (e.target === e.currentTarget) closeLeaderboard();
         });
+        
+        // Close progress on overlay click
+        document.getElementById('progressOverlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeProgress();
+        });
+        
+        // Wrapper function for progress button
+        function showCurrentUserProgress() {
+            showProgress(currentUser);
+        }
+        
+        // Expose functions to global scope for onclick handlers
+        window.selectUser = selectUser;
+        window.switchUser = switchUser;
+        window.openLeaderboard = openLeaderboard;
+        window.closeLeaderboard = closeLeaderboard;
+        window.showProgress = showProgress;
+        window.showCurrentUserProgress = showCurrentUserProgress;
+        window.closeProgress = closeProgress;
+        window.toggleSound = toggleSound;
+        window.setMode = setMode;
+        window.setDifficulty = setDifficulty;
+        window.selectChoice = selectChoice;
+        window.selectMemoryChoice = selectMemoryChoice;
     </script>
 </body>
 </html>
