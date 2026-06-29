@@ -122,6 +122,13 @@
         .feedback.correct { color: #38ef7d; }
         .feedback.incorrect { color: #f5576c; }
 
+        /* Timer bar */
+        .timer-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin: 8px 0 4px; overflow: hidden; }
+        .timer-bar { height: 100%; width: 100%; background: linear-gradient(90deg, #38ef7d, #11998e); border-radius: 3px; transition: width 0.3s linear; }
+        .timer-bar.warning { background: linear-gradient(90deg, #ffd86f, #f5576c); }
+        .timer-bar.danger { background: linear-gradient(90deg, #f5576c, #f093fb); }
+        .timer-text { color: rgba(255,255,255,0.5); font-size: 0.75em; font-weight: 600; text-align: right; margin-bottom: 2px; }
+
         /* Spelling */
         .spelling-area { margin: 12px 0; }
         .spelling-slots { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin: 10px 0; min-height: 46px; padding: 8px; background: rgba(255,255,255,0.04); border-radius: 12px; }
@@ -259,6 +266,11 @@
 
             <div class="feedback" id="feedback"></div>
 
+            <div class="timer-container" id="timerContainer">
+                <div class="timer-text" id="timerText"></div>
+                <div class="timer-bar" id="timerBar"></div>
+            </div>
+
             <div class="float-btns">
                 <button class="float-btn" onclick="showLeaderboard()">🏆 High Score</button>
                 <button class="float-btn" onclick="backToMenu()">← Kembali</button>
@@ -333,6 +345,8 @@
         let spellingAnswer = '';
         let spellingTarget = '';
         let usedIndices = [];
+        let timerInterval = null;
+        let timeLeft = 0;
 
         // ============ AUDIO ============
         let audioCtx = null;
@@ -362,6 +376,56 @@
                     osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.1);
                 }
             }catch(e){}
+        }
+
+        // ============ TIMER ============
+        function getTimerDuration(){
+            const times = {1: 25, 2: 18, 3: 12};
+            return times[currentLevel] || 18;
+        }
+        function startTimer(){
+            clearTimer();
+            const total = getTimerDuration();
+            timeLeft = total;
+            const bar = document.getElementById('timerBar');
+            const text = document.getElementById('timerText');
+            bar.style.width = '100%';
+            bar.className = 'timer-bar';
+            text.textContent = '⏱ ' + timeLeft + 's';
+            document.getElementById('timerContainer').style.display = 'block';
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const pct = (timeLeft / total) * 100;
+                bar.style.width = Math.max(0, pct) + '%';
+                text.textContent = '⏱ ' + timeLeft + 's';
+                if (pct < 25) bar.className = 'timer-bar danger';
+                else if (pct < 50) bar.className = 'timer-bar warning';
+                if (timeLeft <= 0) {
+                    clearTimer();
+                    timeOut();
+                }
+            }, 1000);
+        }
+        function clearTimer(){
+            if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+            document.getElementById('timerContainer').style.display = 'none';
+        }
+        function timeOut(){
+            if (isAnswering) return;
+            isAnswering = true;
+            document.getElementById('choiceBtns').innerHTML = '';
+            document.getElementById('spellingArea').style.display = 'none';
+            const fb = document.getElementById('feedback');
+            if (currentWord) {
+                fb.textContent = '⏰ Waktu habis! Jawaban: ' + currentWord.en + ' (' + currentWord.id + ')';
+            } else {
+                fb.textContent = '⏰ Waktu habis!';
+            }
+            fb.className = 'feedback incorrect';
+            wrongScore++; streakScore = 0;
+            updateScoreDisplay();
+            playSound('wrong');
+            setTimeout(nextQuestion, 1200);
         }
 
         // ============ LEADERBOARD (localStorage) ============
@@ -480,6 +544,7 @@
             if(mode==='picture')showPicture();
             else if(mode==='translate')showTranslate();
             else if(mode==='spelling')showSpelling();
+            startTimer();
         }
 
         function showPicture(){
@@ -532,6 +597,7 @@
         function checkChoice(chosen,correct,btn){
             if(isAnswering)return;
             isAnswering=true;
+            clearTimer();
             document.querySelectorAll('.choice-btn').forEach(b=>{b.disabled=true});
             const area=document.getElementById('questionArea');
             const fb=document.getElementById('feedback');
@@ -598,6 +664,7 @@
         function spellingSubmit(){
             if(isAnswering||spellingAnswer.length!==spellingTarget.length)return;
             isAnswering=true;
+            clearTimer();
             const area=document.getElementById('questionArea');
             const fb=document.getElementById('feedback');
             if(spellingAnswer===spellingTarget){
@@ -619,6 +686,7 @@
 
         // ============ ROUND END ============
         function finishRound(){
+            clearTimer();
             updateScore(currentUser,currentMode,currentLevel,correctScore);
             const fb=document.getElementById('feedback');
             document.getElementById('qEmoji').textContent='🎉';

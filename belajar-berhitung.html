@@ -142,6 +142,13 @@
         .feedback.correct { color: #38ef7d; }
         .feedback.incorrect { color: #f5576c; }
 
+        /* Timer bar */
+        .timer-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin: 8px 0 4px; overflow: hidden; }
+        .timer-bar { height: 100%; width: 100%; background: linear-gradient(90deg, #38ef7d, #11998e); border-radius: 3px; transition: width 0.3s linear; }
+        .timer-bar.warning { background: linear-gradient(90deg, #ffd86f, #f5576c); }
+        .timer-bar.danger { background: linear-gradient(90deg, #f5576c, #f093fb); }
+        .timer-text { color: rgba(255,255,255,0.5); font-size: 0.75em; font-weight: 600; text-align: right; margin-bottom: 2px; }
+
         .next-btn {
             display: none; margin: 12px auto 0; padding: 12px 28px; background: linear-gradient(135deg, #11998e, #38ef7d);
             color: #fff; border: none; border-radius: 12px; font-family: 'Nunito', sans-serif;
@@ -330,6 +337,11 @@
 
             <div class="feedback" id="feedback"></div>
 
+            <div class="timer-container" id="timerContainer">
+                <div class="timer-text" id="timerText"></div>
+                <div class="timer-bar" id="timerBar"></div>
+            </div>
+
             <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Soal Berikutnya →</button>
 
             <div class="memory-timer" id="memoryTimer" style="display:none"></div>
@@ -395,6 +407,8 @@
         let memorySequence = [];
         let memoryPlayerIndex = 0;
         let memoryTimer = null;
+        let timerInterval = null;
+        let timeLeft = 0;
 
         const USERS = ['Yusuf','Musa','Aisha','Umum'];
         const EMOJIS = {Yusuf:'👦',Musa:'🧒',Aisha:'👧',Umum:'🌐'};
@@ -549,6 +563,54 @@
             ['questionCounter','questionCounter2'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='Soal '+questionNumber+'/'+questionsPerLevel});
         }
 
+        // ============ TIMER ============
+        function getTimerDuration(){
+            const times = {easy: 20, medium: 15, hard: 10};
+            return times[currentDifficulty] || 15;
+        }
+        function startTimer(){
+            clearTimer();
+            const total = getTimerDuration();
+            timeLeft = total;
+            const bar = document.getElementById('timerBar');
+            const text = document.getElementById('timerText');
+            bar.style.width = '100%';
+            bar.className = 'timer-bar';
+            text.textContent = '⏱ ' + timeLeft + 's';
+            document.getElementById('timerContainer').style.display = 'block';
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const pct = (timeLeft / total) * 100;
+                bar.style.width = Math.max(0, pct) + '%';
+                text.textContent = '⏱ ' + timeLeft + 's';
+                if (pct < 25) bar.className = 'timer-bar danger';
+                else if (pct < 50) bar.className = 'timer-bar warning';
+                if (timeLeft <= 0) {
+                    clearTimer();
+                    timeOut();
+                }
+            }, 1000);
+        }
+        function clearTimer(){
+            if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+            document.getElementById('timerContainer').style.display = 'none';
+        }
+        function timeOut(){
+            if (isAnswering) return;
+            isAnswering = true;
+            document.querySelectorAll('.choice-btn').forEach(b => { b.disabled = true });
+            const fb = document.getElementById('feedback');
+            fb.textContent = '⏰ Waktu habis! Jawaban: ' + correctAnswer;
+            fb.className = 'feedback incorrect';
+            document.querySelectorAll('.choice-btn').forEach(b => {
+                if (parseInt(b.textContent) === correctAnswer) b.classList.add('correct');
+            });
+            wrongScore++; streakScore = 0;
+            updateScoreDisplay();
+            playSound('wrong');
+            setTimeout(nextQuestion, 1200);
+        }
+
         // ============ MODE & DIFFICULTY ============
         function setMode(mode,ev){
             currentMode=mode;
@@ -639,6 +701,7 @@
             generateChoices(answer);
             document.getElementById('memoryTimer').style.display='none';
             document.getElementById('memoryGrid').style.display='none';
+            startTimer();
         }
 
         function rand(mn,mx){return Math.floor(Math.random()*(mx-mn+1))+mn}
@@ -665,6 +728,7 @@
         function checkAnswer(chosen,btn){
             if(isAnswering)return;
             isAnswering=true;
+            clearTimer();
             document.querySelectorAll('.choice-btn').forEach(b=>{b.disabled=true});
             const area=document.getElementById('questionArea');
             const fb=document.getElementById('feedback');
@@ -685,7 +749,7 @@
                 playSound('wrong');
             }
             updateScoreDisplay();
-            document.getElementById('nextBtn').style.display='block';
+            setTimeout(nextQuestion, 900);
         }
 
         // ============ MEMORY GAME ============
@@ -769,7 +833,7 @@
                     correctScore++;streakScore++;
                     playSound('correct');
                     updateScoreDisplay();
-                    document.getElementById('nextBtn').style.display='block';
+                    setTimeout(nextQuestion, 1200);
                 }
             }else{
                 isAnswering=true;
@@ -789,6 +853,7 @@
 
         // ============ ROUND END ============
         async function finishRound(){
+            clearTimer();
             await recordSession(currentUser,correctScore,wrongScore,currentMode,currentDifficulty);
             await updateLeaderboardScore(currentUser,currentMode,currentDifficulty,correctScore);
 
