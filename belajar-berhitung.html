@@ -156,16 +156,52 @@
         }
         .next-btn:hover { transform: translateY(-2px); }
 
-        /* Memory game */
+        /* Memory Match game */
         .memory-timer { font-size: 1.3em; color: #fff; font-weight: 800; margin: 10px 0; text-align: center; }
-        .memory-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin: 12px 0; max-width: 280px; margin-left: auto; margin-right: auto; }
+        .memory-stats { text-align: center; color: rgba(255,255,255,0.7); font-size: 0.9em; font-weight: 600; margin-bottom: 8px; }
+        .memory-grid { display: grid; gap: 8px; margin: 12px 0; max-width: 340px; margin-left: auto; margin-right: auto; }
+        .memory-grid.easy { grid-template-columns: repeat(4, 1fr); }
+        .memory-grid.medium { grid-template-columns: repeat(4, 1fr); }
+        .memory-grid.hard { grid-template-columns: repeat(4, 1fr); }
         .memory-card {
-            aspect-ratio: 1; font-size: 1.8em; display: flex; align-items: center; justify-content: center;
-            background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 12px;
-            cursor: pointer; transition: all 0.3s; color: transparent; user-select: none;
+            aspect-ratio: 1; font-size: 1.6em; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 14px;
+            cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: transparent; user-select: none; position: relative; perspective: 1000px;
+            border: 2px solid rgba(255,255,255,0.1);
         }
-        .memory-card.revealed { background: rgba(255,255,255,0.15); color: #fff; }
-        .memory-card.matched { background: #11998e; color: #fff; }
+        .memory-card .card-front {
+            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+            font-size: 1em; backface-visibility: hidden;
+        }
+        .memory-card .card-back {
+            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+            font-size: 1.2em; backface-visibility: hidden; transform: rotateY(180deg);
+        }
+        .memory-card.flipped {
+            transform: rotateY(180deg);
+        }
+        .memory-card.flipped .card-front { visibility: hidden; }
+        .memory-card.flipped .card-back { visibility: visible; }
+        .memory-card.matched {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            border-color: #38ef7d;
+            animation: matchPop 0.5s ease;
+        }
+        .memory-card.wrong-flash {
+            animation: wrongShake 0.5s ease;
+            border-color: #f5576c;
+        }
+        @keyframes matchPop {
+            0% { transform: rotateY(180deg) scale(1); }
+            50% { transform: rotateY(180deg) scale(1.15); }
+            100% { transform: rotateY(180deg) scale(1); }
+        }
+        @keyframes wrongShake {
+            0%,100% { transform: rotateY(180deg) translateX(0); }
+            25% { transform: rotateY(180deg) translateX(-6px); }
+            75% { transform: rotateY(180deg) translateX(6px); }
+        }
         .memory-card:hover { transform: scale(1.05); }
 
         /* Sound toggle */
@@ -345,6 +381,7 @@
             <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Soal Berikutnya →</button>
 
             <div class="memory-timer" id="memoryTimer" style="display:none"></div>
+            <div class="memory-stats" id="memoryStats" style="display:none"></div>
             <div class="memory-grid" id="memoryGrid" style="display:none"></div>
 
             <div class="float-btns">
@@ -757,103 +794,147 @@
             setTimeout(nextQuestion, 900);
         }
 
-        // ============ MEMORY GAME ============
-        const allMemoryEmojis=['🐶','🐱','🐰','🐼','🐨','🦁','🐯','🐸','🐵','🦊','🐻','🐷','🐮','🐔','🐧','🐦'];
-        let memoryRevealed=[];
-        let memoryMatched=[];
-        let isMemorizing=false;
+        // ============ MEMORY MATCH GAME ============
+        const allMemoryEmojis=['🐶','🐱','🐰','🐼','🐨','🦁','🐯','🐸','🐵','🦊','🐻','🐷','🐮','🐔','🐧','🐦','🦄','🐙'];
+        let memoryCards=[];
+        let flippedCards=[];
+        let matchedPairs=0;
+        let totalPairs=0;
+        let memoryMoves=0;
+        let isCheckingMemory=false;
 
         function startMemoryGame(){
             isMemoryMode=true;
             isAnswering=false;
-            document.getElementById('question').textContent='🧠 Permainan Memori!';
+            matchedPairs=0;
+            memoryMoves=0;
+            flippedCards=[];
+            isCheckingMemory=false;
+
+            // Set pairs based on difficulty
+            const pairCounts={easy:4,medium:6,hard:8};
+            totalPairs=pairCounts[currentDifficulty]||4;
+
+            // Pick random emojis and create pairs
+            const shuffled=[...allMemoryEmojis].sort(()=>Math.random()-0.5);
+            const selected=shuffled.slice(0,totalPairs);
+            memoryCards=[...selected,...selected]
+                .sort(()=>Math.random()-0.5)
+                .map((emoji,i)=>({id:i,emoji:emoji,matched:false,flipped:false}));
+
+            // Update UI
+            document.getElementById('question').textContent='🧠 Memory Match!';
             document.getElementById('emojiDisplay').textContent='';
-            document.getElementById('hintText').textContent='Ingat urutan emoji!';
+            document.getElementById('hintText').textContent='Cocokkan pasangan emoji yang sama!';
             document.getElementById('choiceButtons').innerHTML='';
             document.getElementById('nextBtn').style.display='none';
             document.getElementById('feedback').textContent='';
             document.getElementById('feedback').className='feedback';
 
-            const seqLen={easy:3,medium:5,hard:7}[currentDifficulty]||3;
-            memorySequence=[];
-            memoryRevealed=[];
-            memoryMatched=[];
-            isMemorizing=true;
-            for(let i=0;i<seqLen;i++){
-                memorySequence.push(allMemoryEmojis[Math.floor(Math.random()*allMemoryEmojis.length)]);
-                memoryRevealed.push(false);
-                memoryMatched.push(false);
-            }
-            memoryPlayerIndex=0;
-
-            // Show sequence
-            const timerEl=document.getElementById('memoryTimer');
+            // Show grid
             const gridEl=document.getElementById('memoryGrid');
-            timerEl.style.display='block';
+            gridEl.className='memory-grid '+currentDifficulty;
             gridEl.style.display='grid';
+            document.getElementById('memoryTimer').style.display='none';
 
-            let countdown=seqLen+2;
-            timerEl.textContent='⏳ '+countdown;
-            const ci=setInterval(()=>{
-                countdown--;
-                timerEl.textContent='⏳ '+countdown;
-                if(countdown<=0){
-                    clearInterval(ci);
-                    isMemorizing=false;
-                    timerEl.textContent='🧠 Giliranmu!';
-                    renderMemoryGame();
-                }else{
-                    renderMemoryGame();
-                }
-            },1000);
+            // Show stats
+            const statsEl=document.getElementById('memoryStats');
+            statsEl.style.display='block';
+            updateMemoryStats();
+
+            // Show all cards briefly (memorize phase)
+            memoryCards.forEach(c=>c.flipped=true);
+            renderMemoryGrid();
+
+            // Then hide after 2 seconds
+            setTimeout(()=>{
+                memoryCards.forEach(c=>{if(!c.matched)c.flipped=false});
+                renderMemoryGrid();
+            },2000);
         }
 
-        function renderMemoryGame(){
+        function updateMemoryStats(){
+            const statsEl=document.getElementById('memoryStats');
+            if(statsEl){
+                statsEl.textContent='🎯 '+matchedPairs+'/'+totalPairs+' pasangan  |  👆 '+memoryMoves+' langkah';
+            }
+        }
+
+        function renderMemoryGrid(){
             const grid=document.getElementById('memoryGrid');
             grid.innerHTML='';
-            memorySequence.forEach((emoji,i)=>{
-                const card=document.createElement('div');
-                card.className='memory-card';
-                const shouldReveal=isMemorizing||memoryPlayerIndex>i;
-                if(shouldReveal)card.classList.add('revealed');
-                if(memoryMatched[i])card.classList.add('matched');
-                card.textContent=(memoryMatched[i]||shouldReveal)?emoji:'❓';
-                card.onclick=()=>memoryClick(i);
-                grid.appendChild(card);
+            memoryCards.forEach((card,i)=>{
+                const cardEl=document.createElement('div');
+                cardEl.className='memory-card';
+                if(card.flipped||card.matched)cardEl.classList.add('flipped');
+                if(card.matched)cardEl.classList.add('matched');
+
+                cardEl.innerHTML='<div class="card-front">❓</div><div class="card-back">'+card.emoji+'</div>';
+                cardEl.onclick=()=>memoryCardClick(i);
+                grid.appendChild(cardEl);
             });
         }
 
-        function memoryClick(idx){
-            if(isAnswering||memoryMatched[idx]||memoryPlayerIndex!==idx)return;
-            const card=document.querySelectorAll('.memory-grid .memory-card')[idx];
-            if(!card)return;
-            card.textContent=memorySequence[idx];
-            card.classList.add('revealed');
+        function memoryCardClick(idx){
+            if(isCheckingMemory)return;
+            const card=memoryCards[idx];
+            if(card.matched||card.flipped)return;
+            if(flippedCards.length>=2)return;
 
-            if(memorySequence[idx]===memorySequence[memoryPlayerIndex]){
-                memoryMatched[idx]=true;
-                memoryPlayerIndex++;
-                playSound('click');
-                if(memoryPlayerIndex>=memorySequence.length){
-                    isAnswering=true;
-                    const fb=document.getElementById('feedback');
-                    fb.textContent='🎉 Ingatanmu luar biasa!';
-                    fb.className='feedback correct';
-                    correctScore++;streakScore++;
+            // Flip card
+            card.flipped=true;
+            flippedCards.push(card);
+            renderMemoryGrid();
+            playSound('click');
+
+            // Check when 2 cards flipped
+            if(flippedCards.length===2){
+                isCheckingMemory=true;
+                memoryMoves++;
+                updateMemoryStats();
+
+                const[card1,card2]=flippedCards;
+                if(card1.emoji===card2.emoji){
+                    // Match!
+                    card1.matched=true;
+                    card2.matched=true;
+                    matchedPairs++;
                     playSound('correct');
-                    updateScoreDisplay();
-                    setTimeout(nextQuestion, 1200);
+
+                    const fb=document.getElementById('feedback');
+                    if(matchedPairs>=totalPairs){
+                        fb.textContent='🎉 Semua pasangan cocok! '+memoryMoves+' langkah!';
+                        fb.className='feedback correct';
+                        correctScore=matchedPairs;
+                        streakScore=matchedPairs;
+                        updateScoreDisplay();
+                        setTimeout(()=>{
+                            document.getElementById('nextBtn').style.display='block';
+                        },1000);
+                    }else{
+                        fb.textContent='✅ '+card1.emoji+' cocok! ('+matchedPairs+'/'+totalPairs+')';
+                        fb.className='feedback correct';
+                    }
+
+                    flippedCards=[];
+                    isCheckingMemory=false;
+                    updateMemoryStats();
+                    setTimeout(()=>renderMemoryGrid(),300);
+                }else{
+                    // No match - shake and flip back
+                    const fb=document.getElementById('feedback');
+                    fb.textContent='❌ Coba lagi!';
+                    fb.className='feedback incorrect';
+                    playSound('wrong');
+
+                    setTimeout(()=>{
+                        card1.flipped=false;
+                        card2.flipped=false;
+                        flippedCards=[];
+                        isCheckingMemory=false;
+                        renderMemoryGrid();
+                    },1000);
                 }
-            }else{
-                isAnswering=true;
-                const fb=document.getElementById('feedback');
-                fb.textContent='😅 Urutannya: '+memorySequence.join(' ');
-                fb.className='feedback incorrect';
-                wrongScore++;streakScore=0;
-                playSound('wrong');
-                updateScoreDisplay();
-                // Advance question and show next after delay
-                document.getElementById('nextBtn').style.display='block';
             }
         }
 
@@ -964,7 +1045,7 @@
         window.setDifficulty=setDifficulty;
         window.checkAnswer=checkAnswer;
         window.nextQuestion=nextQuestion;
-        window.memoryClick=memoryClick;
+        window.memoryCardClick=memoryCardClick;
         window.showLeaderboard=showLeaderboard;
         window.closeLB=closeLB;
         window.showProgress=showProgress;
