@@ -3,145 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📚 YUSUF English - Belajar Bahasa Inggris</title>
+    <title>YUSUF English - Belajar Bahasa Inggris</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#11998e 0%,#38ef7d 100%);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
-        .container{background:#fff;border-radius:20px;padding:30px;box-shadow:0 10px 30px rgba(0,0,0,.2);max-width:520px;width:100%;text-align:center}
-        h1{color:#11998e;margin-bottom:5px;font-size:1.8em}
-        .subtitle{color:#666;margin-bottom:20px;font-size:1em}
-        .user-greeting{font-size:1.1em;color:#333;margin-bottom:15px}
-        .screen{display:none}
-        .screen.active{display:block}
-        .welcome-emoji{font-size:4em;margin:20px 0}
-        .user-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:15px 0}
-        .user-btn{padding:12px 20px;border:3px solid #11998e;background:#fff;color:#11998e;border-radius:12px;cursor:pointer;font-size:1em;font-weight:bold;transition:.3s}
-        .user-btn:hover,.user-btn.active{background:#11998e;color:#fff}
-        .mode-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:15px}
-        .mode-btn{padding:10px 14px;border:2px solid #11998e;background:#fff;color:#11998e;border-radius:10px;cursor:pointer;font-size:.9em;font-weight:bold;transition:.3s}
-        .mode-btn:hover,.mode-btn.active{background:#11998e;color:#fff}
-        .cat-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:15px}
-        .cat-btn{padding:8px 12px;border:2px solid #38ef7d;background:#fff;color:#11998e;border-radius:10px;cursor:pointer;font-size:.85em;font-weight:bold;transition:.3s}
-        .cat-btn:hover,.cat-btn.active{background:#11998e;color:#fff}
-        .score-board{display:flex;justify-content:space-around;background:#f8f9fa;border-radius:10px;padding:12px;margin:10px 0}
-        .score-item{text-align:center}
-        .score-value{font-size:1.5em;font-weight:bold;color:#11998e}
-        .score-label{color:#666;font-size:.8em}
-        .level-badge{display:inline-block;background:#d4edda;color:#155724;padding:5px 12px;border-radius:8px;font-weight:bold;font-size:.9em;margin-bottom:10px}
-        .question-area{background:#f8f9fa;border-radius:15px;padding:25px;margin:15px 0;min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-        .question-emoji{font-size:4em;margin:10px 0;line-height:1.2}
-        .question-text{font-size:1.2em;color:#333;margin-bottom:10px}
-        .question-hint{color:#888;font-size:.85em;font-style:italic}
-        .choice-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:15px 0}
-        .choice-btn{padding:16px 24px;font-size:1.1em;font-weight:bold;border:3px solid #ddd;border-radius:12px;background:#fff;cursor:pointer;transition:.3s;min-width:90px}
-        .choice-btn:hover{border-color:#11998e;transform:scale(1.05)}
-        .choice-btn:active{transform:scale(.95)}
-        .choice-btn.correct{background:#4CAF50;color:#fff;border-color:#4CAF50}
-        .choice-btn.wrong{background:#f44336;color:#fff;border-color:#f44336}
-        .choice-btn:disabled{opacity:.7;cursor:not-allowed;transform:none}
-        .feedback{font-size:1.2em;font-weight:bold;margin:10px 0;min-height:35px}
-        .feedback.correct{color:#28a745}
-        .feedback.incorrect{color:#dc3545}
-        .spelling-area{margin:15px 0}
-        .spelling-slots{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0;min-height:50px;padding:10px;background:#f0f0f0;border-radius:12px}
-        .spelling-slot{width:44px;height:50px;border:2px dashed #11998e;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5em;font-weight:bold;color:#11998e}
-        .spelling-slot.filled{background:#e8f5e9;border-style:solid}
-        .letter-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0}
-        .letter-btn{width:44px;height:44px;border:2px solid #11998e;background:#fff;color:#11998e;border-radius:8px;font-size:1.2em;font-weight:bold;cursor:pointer;transition:.2s}
-        .letter-btn:hover{background:#11998e;color:#fff}
-        .letter-btn:disabled{opacity:.4;cursor:not-allowed}
-        .spelling-actions{display:flex;gap:10px;justify-content:center;margin:10px 0}
-        .action-btn{padding:10px 20px;border:none;border-radius:10px;font-size:1em;font-weight:bold;cursor:pointer;transition:.3s}
-        .action-btn.del{background:#f44336;color:#fff}
-        .action-btn.submit{background:#4CAF50;color:#fff}
-        .action-btn:hover{opacity:.85}
-        .notif{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:12px 24px;border-radius:10px;font-size:1em;z-index:100;opacity:0;transition:.3s;pointer-events:none}
-        .notif.show{opacity:1}
-        .home-btn{margin-top:10px;padding:8px 16px;background:none;border:2px solid #999;color:#999;border-radius:8px;cursor:pointer;font-size:.85em;transition:.3s}
-        .home-btn:hover{border-color:#11998e;color:#11998e}
-        .leaderboard-btn{margin-top:5px;padding:8px 16px;background:none;border:2px solid #11998e;color:#11998e;border-radius:8px;cursor:pointer;font-size:.85em;transition:.3s}
-        .leaderboard-btn:hover{background:#11998e;color:#fff}
-        .lb-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center}
-        .lb-modal.show{display:flex}
-        .lb-content{background:#fff;border-radius:16px;padding:25px;max-width:400px;width:90%;max-height:70vh;overflow-y:auto}
-        .lb-content h2{color:#11998e;margin-bottom:15px}
-        .lb-close{background:#11998e;color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;margin-top:10px}
-        .lb-row{display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid #eee;font-size:.9em}
-        .lb-row .name{font-weight:bold}
-        .lb-row .pts{color:#11998e;font-weight:bold}
-        @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
-        .shake{animation:shake .3s ease-in-out}
-        @keyframes celebrate{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
-        .celebrate{animation:celebrate .4s ease-in-out}
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;
+            line-height: 1.6;
+        }
+        .container {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 28px;
+            padding: 28px 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            max-width: 520px;
+            width: 100%;
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        h1 {
+            color: #fff; font-size: 2em; font-weight: 900; text-align: center; letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle { color: rgba(255,255,255,0.5); text-align: center; font-size: 0.95em; margin-bottom: 20px; font-weight: 600; }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        .btn {
+            padding: 10px 18px; border: none; border-radius: 12px; cursor: pointer;
+            font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.9em;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn:active { transform: scale(0.95); }
+        .btn-ghost { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.15); }
+
+        /* User selection */
+        .user-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 16px 0; }
+        .user-btn {
+            padding: 14px 22px; border: 2px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.05);
+            color: #fff; border-radius: 16px; cursor: pointer; font-family: 'Nunito', sans-serif;
+            font-weight: 700; font-size: 1em; transition: all 0.3s;
+        }
+        .user-btn:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.3); transform: translateY(-2px); }
+        .user-btn.active { background: linear-gradient(135deg, #11998e, #38ef7d); border-color: transparent; }
+
+        .welcome-emoji { font-size: 4em; text-align: center; margin: 10px 0; display: block; }
+
+        .greeting { color: #fff; font-weight: 700; font-size: 1em; margin-bottom: 12px; text-align: center; }
+
+        /* Mode buttons */
+        .mode-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 12px; }
+        .mode-btn {
+            padding: 10px 16px; border: 2px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.7); border-radius: 12px; cursor: pointer; font-family: 'Nunito', sans-serif;
+            font-weight: 700; font-size: 0.85em; transition: all 0.3s;
+        }
+        .mode-btn:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); }
+        .mode-btn.active { background: linear-gradient(135deg, #11998e, #38ef7d); color: #fff; border-color: transparent; transform: scale(1.05); }
+
+        /* Category buttons */
+        .cat-btns { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; }
+        .cat-btn {
+            padding: 6px 12px; border: 2px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.6); border-radius: 10px; cursor: pointer; font-family: 'Nunito', sans-serif;
+            font-weight: 600; font-size: 0.78em; transition: all 0.3s;
+        }
+        .cat-btn:hover { border-color: rgba(255,255,255,0.25); }
+        .cat-btn.active { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; border-color: transparent; }
+
+        .score-board { display: flex; gap: 8px; justify-content: center; margin-bottom: 12px; flex-wrap: wrap; }
+        .score-item { background: rgba(255,255,255,0.06); border-radius: 12px; padding: 10px 16px; text-align: center; flex: 1; min-width: 70px; }
+        .score-value { font-size: 1.4em; font-weight: 900; color: #fff; }
+        .score-label { font-size: 0.7em; color: rgba(255,255,255,0.5); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .level-badge {
+            display: inline-block; background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: #fff; padding: 4px 14px; border-radius: 20px; font-weight: 800; font-size: 0.85em; margin-bottom: 8px;
+        }
+        .question-counter { color: rgba(255,255,255,0.4); font-size: 0.8em; font-weight: 600; text-align: center; margin-bottom: 6px; }
+
+        .question-area {
+            background: rgba(255,255,255,0.06); border-radius: 16px; padding: 24px;
+            margin-bottom: 16px; min-height: 150px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; text-align: center;
+        }
+        .question-emoji { font-size: 4em; margin: 8px 0; line-height: 1.2; }
+        .question-text { font-size: 1.2em; color: #fff; font-weight: 700; margin-bottom: 8px; }
+        .question-hint { color: rgba(255,255,255,0.4); font-size: 0.85em; font-style: italic; }
+
+        .choice-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 12px 0; }
+        .choice-btn {
+            padding: 16px 24px; font-size: 1.15em; font-weight: 700;
+            border: 2px solid rgba(255,255,255,0.15); border-radius: 14px;
+            background: rgba(255,255,255,0.08); color: #fff; cursor: pointer;
+            transition: all 0.3s; min-width: 90px; font-family: 'Nunito', sans-serif;
+        }
+        .choice-btn:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); transform: scale(1.05); }
+        .choice-btn:active { transform: scale(0.95); }
+        .choice-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+        .choice-btn.correct { background: #11998e !important; border-color: #38ef7d !important; }
+        .choice-btn.wrong { background: #f5576c !important; border-color: #f093fb !important; }
+
+        .feedback { font-size: 1.1em; font-weight: 700; margin: 10px 0; min-height: 36px; text-align: center; }
+        .feedback.correct { color: #38ef7d; }
+        .feedback.incorrect { color: #f5576c; }
+
+        /* Spelling */
+        .spelling-area { margin: 12px 0; }
+        .spelling-slots { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin: 10px 0; min-height: 46px; padding: 8px; background: rgba(255,255,255,0.04); border-radius: 12px; }
+        .spelling-slot { width: 42px; height: 48px; border: 2px dashed rgba(255,255,255,0.25); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.4em; font-weight: 800; color: #fff; }
+        .spelling-slot.filled { background: rgba(255,255,255,0.1); border-style: solid; border-color: #38ef7d; }
+        .letter-btns { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin: 10px 0; }
+        .letter-btn {
+            width: 42px; height: 42px; border: 2px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08);
+            color: #fff; border-radius: 8px; font-size: 1.1em; font-weight: 700; cursor: pointer;
+            font-family: 'Nunito', sans-serif; transition: all 0.2s;
+        }
+        .letter-btn:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); }
+        .letter-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; }
+
+        .spelling-actions { display: flex; gap: 8px; justify-content: center; margin: 10px 0; }
+
+        .float-btns { display: flex; gap: 8px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+        .float-btn {
+            padding: 10px 18px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.8); border-radius: 12px; cursor: pointer; font-family: 'Nunito', sans-serif;
+            font-weight: 700; font-size: 0.85em; transition: all 0.3s;
+        }
+        .float-btn:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
+
+        /* Leaderboard Modal */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay.show { display: flex; }
+        .modal-content { background: #1a1a2e; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 28px; max-width: 420px; width: 100%; max-height: 70vh; overflow-y: auto; animation: fadeIn 0.3s ease-out; }
+        .modal-content h2 { color: #fff; font-size: 1.3em; margin-bottom: 16px; text-align: center; }
+        .lb-row { display: flex; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); font-size: 0.9em; }
+        .lb-pts { color: #38ef7d; font-weight: 800; }
+        .modal-close { display: block; margin: 16px auto 0; padding: 10px 24px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; cursor: pointer; font-family: 'Nunito', sans-serif; font-weight: 700; }
+
+        .notif { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: #fff; padding: 12px 24px; border-radius: 12px; font-size: 0.95em; z-index: 300; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+        .notif.show { opacity: 1; }
+
+        @keyframes celebrate { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+        .celebrate { animation: celebrate 0.5s ease; }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+        .shake { animation: shake 0.4s ease; }
+
         @media(max-width:480px){
-            .container{padding:15px}
-            .question-emoji{font-size:3em}
-            .choice-btn{padding:12px 16px;font-size:1em;min-width:70px}
-            .letter-btn{width:38px;height:38px;font-size:1.1em}
+            .container { padding: 20px 16px; }
+            h1 { font-size: 1.6em; }
+            .choice-btn { padding: 12px 16px; font-size: 1em; min-width: 70px; }
+            .question-emoji { font-size: 3em; }
+            .letter-btn { width: 38px; height: 38px; font-size: 1em; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>📚 YUSUF English</h1>
-        <div class="subtitle">Belajar Bahasa Inggris yang Seru!</div>
+        <p class="subtitle">Belajar Bahasa Inggris yang Seru!</p>
 
         <!-- Welcome Screen -->
-        <div id="welcomeScreen" class="screen active">
-            <div class="welcome-emoji">🌍</div>
-            <p style="margin-bottom:15px;color:#555;font-size:1.1em">Siapa yang mau belajar?</p>
+        <div class="screen active" id="welcomeScreen">
+            <span class="welcome-emoji">🌍</span>
+            <p style="text-align:center;color:rgba(255,255,255,0.6);margin-bottom:10px;font-weight:600">Siapa yang mau belajar?</p>
             <div class="user-btns">
                 <button class="user-btn" onclick="selectUser('Yusuf')">👦 Yusuf</button>
                 <button class="user-btn" onclick="selectUser('Musa')">🧒 Musa</button>
                 <button class="user-btn" onclick="selectUser('Aisha')">👧 Aisha</button>
                 <button class="user-btn" onclick="selectUser('Umum')">🌐 Umum</button>
             </div>
-            <a href="belajar-berhitung.html" style="display:inline-block;margin-top:12px;padding:10px 18px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;text-decoration:none;border-radius:10px;font-weight:bold;font-size:0.95em;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='scale(1.05)';this.style.boxShadow='0 4px 12px rgba(102,126,234,0.4)'" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='none'">🔢 Kembali ke YUSUF Berhitung</a>
+            <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px">
+                <button class="btn btn-ghost" onclick="goHome()">🏠 Beranda</button>
+                <button class="btn btn-ghost" onclick="goBerhitung()">🔢 Berhitung</button>
+            </div>
         </div>
-        <div id="mainMenu" class="screen">
-            <div class="user-greeting" id="greeting"></div>
-            
-            <p style="font-weight:bold;color:#333;margin-bottom:8px">Pilih Mode:</p>
+
+        <!-- Main Menu -->
+        <div class="screen" id="mainMenu">
+            <div class="greeting" id="greeting"></div>
+
             <div class="mode-btns">
-                <button class="mode-btn" onclick="setMode('picture')">🖼️ Gambar</button>
-                <button class="mode-btn" onclick="setMode('translate')">🔄 Translate</button>
-                <button class="mode-btn" onclick="setMode('spelling')">🔤 Spelling</button>
-                <button class="mode-btn" onclick="setMode('random')">🎲 Acak</button>
+                <button class="mode-btn" onclick="setMode('picture',event)">🖼️ Gambar</button>
+                <button class="mode-btn" onclick="setMode('translate',event)">🔄 Translate</button>
+                <button class="mode-btn" onclick="setMode('spelling',event)">🔤 Spelling</button>
+                <button class="mode-btn" onclick="setMode('random',event)">🎲 Acak</button>
             </div>
 
-            <p style="font-weight:bold;color:#333;margin-bottom:8px">Pilih Kategori:</p>
-            <div class="cat-btns">
-                <button class="cat-btn active" onclick="setCategory('food')">🍎 Makanan</button>
-                <button class="cat-btn" onclick="setCategory('animal')">🐱 Hewan</button>
-                <button class="cat-btn" onclick="setCategory('object')">🏠 Benda</button>
-                <button class="cat-btn" onclick="setCategory('family')">👨‍👩‍👧 Keluarga</button>
-                <button class="cat-btn" onclick="setCategory('place')">🌍 Tempat</button>
-                <button class="cat-btn" onclick="setCategory('color')">🎨 Warna</button>
-            </div>
+            <div class="cat-btns" id="catBtns"></div>
 
             <div class="score-board">
-                <div class="score-item"><div class="score-value" id="correctScore">0</div><div class="score-label">Benar ✅</div></div>
-                <div class="score-item"><div class="score-value" id="wrongScore">0</div><div class="score-label">Salah ❌</div></div>
-                <div class="score-item"><div class="score-value" id="streakScore">0</div><div class="score-label">Streak 🔥</div></div>
+                <div class="score-item"><div class="score-value" id="correctScore">0</div><div class="score-label">✅ Benar</div></div>
+                <div class="score-item"><div class="score-value" id="wrongScore">0</div><div class="score-label">❌ Salah</div></div>
+                <div class="score-item"><div class="score-value" id="streakScore">0</div><div class="score-label">🔥 Streak</div></div>
             </div>
 
-            <div class="level-badge" id="levelBadge">Level 1</div>
-            <div style="color:#888;font-size:.8em" id="questionCounter">Soal 0/10</div>
+            <div style="text-align:center">
+                <span class="level-badge" id="levelBadge">Level 1</span>
+            </div>
+            <div class="question-counter" id="questionCounter">Soal 0/10</div>
 
-            <button class="leaderboard-btn" onclick="showLeaderboard()">🏆 High Score</button>
-            <button class="home-btn" onclick="backToWelcome()">👤 Ganti User</button>
+            <div class="float-btns">
+                <button class="float-btn" onclick="showLeaderboard()">🏆 High Score</button>
+                <button class="float-btn" onclick="backToWelcome()">👤 Ganti User</button>
+            </div>
         </div>
 
         <!-- Game Screen -->
-        <div id="gameScreen" class="screen">
-            <div class="user-greeting" id="greeting2"></div>
+        <div class="screen" id="gameScreen">
+            <div class="greeting" id="greeting2"></div>
+
             <div class="score-board">
-                <div class="score-item"><div class="score-value" id="correctScore2">0</div><div class="score-label">Benar ✅</div></div>
-                <div class="score-item"><div class="score-value" id="wrongScore2">0</div><div class="score-label">Salah ❌</div></div>
-                <div class="score-item"><div class="score-value" id="streakScore2">0</div><div class="score-label">Streak 🔥</div></div>
+                <div class="score-item"><div class="score-value" id="correctScore2">0</div><div class="score-label">✅ Benar</div></div>
+                <div class="score-item"><div class="score-value" id="wrongScore2">0</div><div class="score-label">❌ Salah</div></div>
+                <div class="score-item"><div class="score-value" id="streakScore2">0</div><div class="score-label">🔥 Streak</div></div>
             </div>
-            <div class="level-badge" id="levelBadge2">Level 1</div>
-            <div style="color:#888;font-size:.8em" id="questionCounter2">Soal 0/10</div>
+
+            <div style="text-align:center">
+                <span class="level-badge" id="levelBadge2">Level 1</span>
+            </div>
+            <div class="question-counter" id="questionCounter2">Soal 0/10</div>
 
             <div class="question-area" id="questionArea">
                 <div class="question-emoji" id="qEmoji"></div>
@@ -157,432 +252,432 @@
                 <div class="spelling-slots" id="spellingSlots"></div>
                 <div class="letter-btns" id="letterBtns"></div>
                 <div class="spelling-actions">
-                    <button class="action-btn del" onclick="spellingDelete()">✕ Hapus</button>
-                    <button class="action-btn submit" onclick="spellingSubmit()">✓ Submit</button>
+                    <button class="btn btn-ghost" onclick="spellingDelete()" style="font-size:0.85em">✕ Hapus</button>
+                    <button class="btn" onclick="spellingSubmit()" style="background:linear-gradient(135deg,#11998e,#38ef7d);color:#fff;font-size:0.85em">✓ Cek</button>
                 </div>
             </div>
 
             <div class="feedback" id="feedback"></div>
 
-            <button class="leaderboard-btn" onclick="showLeaderboard()">🏆 High Score</button>
-            <button class="home-btn" onclick="backToMenu()">← Kembali</button>
+            <div class="float-btns">
+                <button class="float-btn" onclick="showLeaderboard()">🏆 High Score</button>
+                <button class="float-btn" onclick="backToMenu()">← Kembali</button>
+            </div>
         </div>
     </div>
 
     <div class="notif" id="notif"></div>
 
     <!-- Leaderboard Modal -->
-    <div class="lb-modal" id="lbModal">
-        <div class="lb-content">
-            <h2>🏆 High Score</h2>
-            <div id="lbContent"></div>
-            <button class="lb-close" onclick="closeLB()">Tutup</button>
+    <div class="modal-overlay" id="lbModal">
+        <div class="modal-content">
+            <h2>🏆 Papan Skor</h2>
+            <div id="lbContent"><p style="color:rgba(255,255,255,0.4);text-align:center">Belum ada skor. Ayo bermain!</p></div>
+            <button class="modal-close" onclick="closeLB()">Tutup</button>
         </div>
     </div>
 
     <script>
-    // ============ DATA ============
-    const USERS = ['Yusuf','Musa','Aisha','Umum'];
-    const EMOJIS = {Yusuf:'👦',Musa:'🧒',Aisha:'👧',Umum:'🌐'};
-    const MODES = [
-        {key:'picture',label:'🖼️ Gambar'},
-        {key:'translate',label:'🔄 Translate'},
-        {key:'spelling',label:'🔤 Spelling'},
-        {key:'random',label:'🎲 Acak'}
-    ];
-    const CATEGORIES = {
-        food:{label:'🍎 Makanan & Minuman',words:[
-            {emoji:'🍎',id:'Apel',en:'Apple'},{emoji:'🍌',id:'Pisang',en:'Banana'},
-            {emoji:'🍚',id:'Nasi',en:'Rice'},{emoji:'💧',id:'Air',en:'Water'},
-            {emoji:'🍞',id:'Roti',en:'Bread'},{emoji:'🍰',id:'Kue',en:'Cake'},
-            {emoji:'🥛',id:'Susu',en:'Milk'},{emoji:'🥚',id:'Telur',en:'Egg'},
-            {emoji:'🍗',id:'Ayam',en:'Chicken'},{emoji:'🐟',id:'Ikan',en:'Fish'}
-        ]},
-        animal:{label:'🐱 Hewan',words:[
-            {emoji:'🐱',id:'Kucing',en:'Cat'},{emoji:'🐶',id:'Anjing',en:'Dog'},
-            {emoji:'🐦',id:'Burung',en:'Bird'},{emoji:'🐟',id:'Ikan',en:'Fish'},
-            {emoji:'🐰',id:'Kelinci',en:'Rabbit'},{emoji:'🐘',id:'Gajah',en:'Elephant'},
-            {emoji:'🦁',id:'Singa',en:'Lion'},{emoji:'🐒',id:'Monyet',en:'Monkey'},
-            {emoji:'🐯',id:'Harimau',en:'Tiger'},{emoji:'🐻',id:'Beruang',en:'Bear'}
-        ]},
-        object:{label:'🏠 Benda',words:[
-            {emoji:'🪑',id:'Kursi',en:'Chair'},{emoji:'📖',id:'Buku',en:'Book'},
-            {emoji:'✏️',id:'Pena',en:'Pen'},{emoji:'🚪',id:'Pintu',en:'Door'},
-            {emoji:'🪟',id:'Jendela',en:'Window'},{emoji:'📱',id:'HP',en:'Phone'},
-            {emoji:'💻',id:'Komputer',en:'Computer'},{emoji:'💡',id:'Lampu',en:'Lamp'},
-            {emoji:'🎒',id:'Tas',en:'Bag'},{emoji:'⌚',id:'Jam',en:'Watch'}
-        ]},
-        family:{label:'👨‍👩‍👧 Keluarga',words:[
-            {emoji:'👨',id:'Ayah',en:'Father'},{emoji:'👩',id:'Ibu',en:'Mother'},
-            {emoji:'👦',id:'Kakak Laki',en:'Brother'},{emoji:'👧',id:'Kakak Perempuan',en:'Sister'},
-            {emoji:'👶',id:'Bayi',en:'Baby'},{emoji:'👴',id:'Kakek',en:'Grandfather'},
-            {emoji:'👵',id:'Nenek',en:'Grandmother'},{emoji:'👨',id:'Paman',en:'Uncle'},
-            {emoji:'👩',id:'Bibi',en:'Aunt'},{emoji:'🧑',id:'Sepupu',en:'Cousin'}
-        ]},
-        place:{label:'🌍 Tempat',words:[
-            {emoji:'🏫',id:'Sekolah',en:'School'},{emoji:'🏠',id:'Rumah',en:'Home'},
-            {emoji:'🌳',id:'Taman',en:'Park'},{emoji:'🏥',id:'Rumah Sakit',en:'Hospital'},
-            {emoji:'🛒',id:'Pasar',en:'Market'},{emoji:'📚',id:'Perpustakaan',en:'Library'},
-            {emoji:'🏖️',id:'Pantai',en:'Beach'},{emoji:'⛰️',id:'Gunung',en:'Mountain'},
-            {emoji:'🏞️',id:'Sungai',en:'River'},{emoji:'🌲',id:'Hutan',en:'Forest'}
-        ]},
-        color:{label:'🎨 Warna',words:[
-            {emoji:'🔴',id:'Merah',en:'Red'},{emoji:'🔵',id:'Biru',en:'Blue'},
-            {emoji:'🟢',id:'Hijau',en:'Green'},{emoji:'🟡',id:'Kuning',en:'Yellow'},
-            {emoji:'🟠',id:'Oranye',en:'Orange'},{emoji:'🟣',id:'Ungu',en:'Purple'},
-            {emoji:'🩷',id:'Merah Muda',en:'Pink'},{emoji:'⚫',id:'Hitam',en:'Black'},
-            {emoji:'⚪',id:'Putih',en:'White'},{emoji:'🟤',id:'Cokelat',en:'Brown'}
-        ]}
-    };
+        // ============ DATA ============
+        const USERS = ['Yusuf','Musa','Aisha','Umum'];
+        const EMOJIS = {Yusuf:'👦',Musa:'🧒',Aisha:'👧',Umum:'🌐'};
+        const MODES = [
+            {key:'picture',label:'🖼️ Gambar'},{key:'translate',label:'🔄 Translate'},
+            {key:'spelling',label:'🔤 Spelling'},{key:'random',label:'🎲 Acak'}
+        ];
+        const CATEGORIES = {
+            food:{label:'🍎 Makanan',words:[
+                {emoji:'🍎',id:'Apel',en:'Apple'},{emoji:'🍌',id:'Pisang',en:'Banana'},{emoji:'🍚',id:'Nasi',en:'Rice'},
+                {emoji:'💧',id:'Air',en:'Water'},{emoji:'🍞',id:'Roti',en:'Bread'},{emoji:'🍰',id:'Kue',en:'Cake'},
+                {emoji:'🥛',id:'Susu',en:'Milk'},{emoji:'🥚',id:'Telur',en:'Egg'},{emoji:'🍗',id:'Ayam',en:'Chicken'},{emoji:'🐟',id:'Ikan',en:'Fish'}
+            ]},
+            animal:{label:'🐱 Hewan',words:[
+                {emoji:'🐱',id:'Kucing',en:'Cat'},{emoji:'🐶',id:'Anjing',en:'Dog'},{emoji:'🐦',id:'Burung',en:'Bird'},
+                {emoji:'🐟',id:'Ikan',en:'Fish'},{emoji:'🐰',id:'Kelinci',en:'Rabbit'},{emoji:'🐘',id:'Gajah',en:'Elephant'},
+                {emoji:'🦁',id:'Singa',en:'Lion'},{emoji:'🐒',id:'Monyet',en:'Monkey'},{emoji:'🐯',id:'Harimau',en:'Tiger'},{emoji:'🐻',id:'Beruang',en:'Bear'}
+            ]},
+            object:{label:'🏠 Benda',words:[
+                {emoji:'🪑',id:'Kursi',en:'Chair'},{emoji:'📖',id:'Buku',en:'Book'},{emoji:'✏️',id:'Pena',en:'Pen'},
+                {emoji:'🚪',id:'Pintu',en:'Door'},{emoji:'🪟',id:'Jendela',en:'Window'},{emoji:'📱',id:'HP',en:'Phone'},
+                {emoji:'💻',id:'Komputer',en:'Computer'},{emoji:'💡',id:'Lampu',en:'Lamp'},{emoji:'🎒',id:'Tas',en:'Bag'},{emoji:'⌚',id:'Jam',en:'Watch'}
+            ]},
+            family:{label:'👨‍👩‍👧 Keluarga',words:[
+                {emoji:'👨',id:'Ayah',en:'Father'},{emoji:'👩',id:'Ibu',en:'Mother'},{emoji:'👦',id:'Kakak Laki',en:'Brother'},
+                {emoji:'👧',id:'Kakak Perempuan',en:'Sister'},{emoji:'👶',id:'Bayi',en:'Baby'},{emoji:'👴',id:'Kakek',en:'Grandfather'},
+                {emoji:'👵',id:'Nenek',en:'Grandmother'},{emoji:'👨',id:'Paman',en:'Uncle'},{emoji:'👩',id:'Bibi',en:'Aunt'},{emoji:'🧑',id:'Sepupu',en:'Cousin'}
+            ]},
+            place:{label:'🌍 Tempat',words:[
+                {emoji:'🏫',id:'Sekolah',en:'School'},{emoji:'🏠',id:'Rumah',en:'Home'},{emoji:'🌳',id:'Taman',en:'Park'},
+                {emoji:'🏥',id:'Rumah Sakit',en:'Hospital'},{emoji:'🛒',id:'Pasar',en:'Market'},{emoji:'📚',id:'Perpustakaan',en:'Library'},
+                {emoji:'🏖️',id:'Pantai',en:'Beach'},{emoji:'⛰️',id:'Gunung',en:'Mountain'},{emoji:'🏞️',id:'Sungai',en:'River'},{emoji:'🌲',id:'Hutan',en:'Forest'}
+            ]},
+            color:{label:'🎨 Warna',words:[
+                {emoji:'🔴',id:'Merah',en:'Red'},{emoji:'🔵',id:'Biru',en:'Blue'},{emoji:'🟢',id:'Hijau',en:'Green'},
+                {emoji:'🟡',id:'Kuning',en:'Yellow'},{emoji:'🟠',id:'Oranye',en:'Orange'},{emoji:'🟣',id:'Ungu',en:'Purple'},
+                {emoji:'🩷',id:'Merah Muda',en:'Pink'},{emoji:'⚫',id:'Hitam',en:'Black'},{emoji:'⚪',id:'Putih',en:'White'},{emoji:'🟤',id:'Cokelat',en:'Brown'}
+            ]}
+        };
 
-    // ============ STATE ============
-    let currentUser = null;
-    let currentMode = 'picture';
-    let currentCategory = 'food';
-    let currentLevel = 1;
-    let correctScore = 0;
-    let wrongScore = 0;
-    let streakScore = 0;
-    let questionNumber = 0;
-    let questionsPerLevel = 10;
-    let isAnswering = false;
-    let currentWord = null;
-    let spellingAnswer = '';
-    let spellingTarget = '';
-    let usedIndices = [];
+        // ============ STATE ============
+        let currentUser = null;
+        let currentMode = 'picture';
+        let currentCategory = 'food';
+        let currentLevel = 1;
+        let correctScore = 0;
+        let wrongScore = 0;
+        let streakScore = 0;
+        let questionNumber = 0;
+        let questionsPerLevel = 10;
+        let isAnswering = false;
+        let currentWord = null;
+        let spellingAnswer = '';
+        let spellingTarget = '';
+        let usedIndices = [];
 
-    // ============ AUDIO ============
-    let audioCtx = null;
-    function getAudioCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx}
-    function playSound(type){
-        const ctx=getAudioCtx();
-        const osc=ctx.createOscillator();
-        const gain=ctx.createGain();
-        osc.connect(gain);gain.connect(ctx.destination);
-        if(type==='correct'){
-            osc.frequency.setValueAtTime(523.25,ctx.currentTime);
-            osc.frequency.setValueAtTime(659.25,ctx.currentTime+.1);
-            osc.frequency.setValueAtTime(783.99,ctx.currentTime+.2);
-            gain.gain.setValueAtTime(.3,ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(.01,ctx.currentTime+.4);
-            osc.start(ctx.currentTime);osc.stop(ctx.currentTime+.4);
-        }else if(type==='wrong'){
-            osc.frequency.setValueAtTime(392,ctx.currentTime);
-            osc.frequency.setValueAtTime(329.63,ctx.currentTime+.15);
-            osc.frequency.setValueAtTime(261.63,ctx.currentTime+.3);
-            gain.gain.setValueAtTime(.3,ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(.01,ctx.currentTime+.5);
-            osc.start(ctx.currentTime);osc.stop(ctx.currentTime+.5);
-        }else{
-            osc.frequency.setValueAtTime(800,ctx.currentTime);
-            gain.gain.setValueAtTime(.1,ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(.01,ctx.currentTime+.1);
-            osc.start(ctx.currentTime);osc.stop(ctx.currentTime+.1);
+        // ============ AUDIO ============
+        let audioCtx = null;
+        function getAC(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx}
+        function playSound(type){
+            try{
+                const ctx=getAC(),osc=ctx.createOscillator(),gain=ctx.createGain();
+                osc.connect(gain);gain.connect(ctx.destination);
+                if(type==='correct'){
+                    osc.frequency.setValueAtTime(523.25,ctx.currentTime);
+                    osc.frequency.setValueAtTime(659.25,ctx.currentTime+0.1);
+                    osc.frequency.setValueAtTime(783.99,ctx.currentTime+0.2);
+                    gain.gain.setValueAtTime(0.25,ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.4);
+                    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.4);
+                }else if(type==='wrong'){
+                    osc.frequency.setValueAtTime(392,ctx.currentTime);
+                    osc.frequency.setValueAtTime(329.63,ctx.currentTime+0.15);
+                    osc.frequency.setValueAtTime(261.63,ctx.currentTime+0.3);
+                    gain.gain.setValueAtTime(0.25,ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.5);
+                    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.5);
+                }else{
+                    osc.frequency.setValueAtTime(800,ctx.currentTime);
+                    gain.gain.setValueAtTime(0.08,ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.1);
+                    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.1);
+                }
+            }catch(e){}
         }
-    }
 
-    // ============ LEADERBOARD ============
-    function getScoreKey(u,m,l){return u+'|'+m+'|L'+l}
-    function getLeaderboard(){
-        try{return JSON.parse(localStorage.getItem('ye_scores'))||{}}catch(e){return{}}
-    }
-    function saveLeaderboard(lb){localStorage.setItem('ye_scores',JSON.stringify(lb))}
-    function updateScore(user,mode,level,score){
-        const lb=getLeaderboard();
-        const key=getScoreKey(user,mode,level);
-        if(!lb[key]||score>lb[key]){lb[key]=score;saveLeaderboard(lb)}
-        // sync to server
-        fetch('/api/scores',{method:'POST',headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({user,mode:mode+'_L'+level,diff:'all',score})}).catch(()=>{});
-    }
-
-    // ============ NAVIGATION ============
-    function selectUser(name){
-        currentUser=name;
-        localStorage.setItem('ye_user',name);
-        showScreen('mainMenu');
-        document.getElementById('greeting').textContent='Halo, '+EMOJIS[name]+' '+name+'! 👋';
-        resetScores();
-        playSound('click');
-    }
-    function showScreen(id){
-        document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-    }
-    function backToWelcome(){showScreen('welcomeScreen');resetScores()}
-    function backToMenu(){
-        showScreen('mainMenu');
-        document.getElementById('greeting').textContent='Halo, '+EMOJIS[currentUser]+' '+currentUser+'! 👋';
-        resetScores();
-    }
-    function resetScores(){
-        correctScore=0;wrongScore=0;streakScore=0;questionNumber=0;usedIndices=[];
-        updateScoreDisplay();
-    }
-    function updateScoreDisplay(){
-        ['correctScore','correctScore2'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=correctScore});
-        ['wrongScore','wrongScore2'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=wrongScore});
-        ['streakScore','streakScore2'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=streakScore});
-        ['levelBadge','levelBadge2'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='Level '+currentLevel});
-        ['questionCounter','questionCounter2'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='Soal '+questionNumber+'/'+questionsPerLevel});
-    }
-
-    // ============ MODE & CATEGORY ============
-    function setMode(mode){
-        currentMode=mode;
-        document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
-        event.target.classList.add('active');
-        playSound('click');
-        startGame();
-    }
-    function setCategory(cat){
-        currentCategory=cat;
-        document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
-        event.target.classList.add('active');
-        playSound('click');
-    }
-
-    // ============ GAME ============
-    function startGame(){
-        showScreen('gameScreen');
-        document.getElementById('greeting2').textContent=EMOJIS[currentUser]+' '+currentUser+' | '+MODES.find(m=>m.key===currentMode).label+' | '+CATEGORIES[currentCategory].label;
-        resetScores();
-        nextQuestion();
-    }
-    function getWords(){return CATEGORIES[currentCategory].words}
-
-    function nextQuestion(){
-        if(questionNumber>=questionsPerLevel){
-            finishRound();return;
+        // ============ LEADERBOARD (localStorage) ============
+        function getScoreKey(u,m,l){return u+'|'+m+'|L'+l}
+        function getLeaderboard(){try{return JSON.parse(localStorage.getItem('ye_scores'))||{}}catch(e){return{}}}
+        function saveLeaderboard(lb){localStorage.setItem('ye_scores',JSON.stringify(lb))}
+        function updateScore(user,mode,level,score){
+            const lb=getLeaderboard();
+            const key=getScoreKey(user,mode,level);
+            if(!lb[key]||score>lb[key]){lb[key]=score;saveLeaderboard(lb)}
         }
-        questionNumber++;
-        isAnswering=false;
-        spellingAnswer='';
-        document.getElementById('feedback').textContent='';
-        document.getElementById('feedback').className='feedback';
-        updateScoreDisplay();
 
-        let mode=currentMode;
-        if(mode==='random'){const modes=['picture','translate','spelling'];mode=modes[Math.floor(Math.random()*modes.length)]}
+        // ============ CATEGORY BUTTONS ============
+        function renderCategoryBtns(){
+            const container=document.getElementById('catBtns');
+            container.innerHTML='';
+            for(const [key,cat] of Object.entries(CATEGORIES)){
+                const btn=document.createElement('button');
+                btn.className='cat-btn'+(key===currentCategory?' active':'');
+                btn.textContent=cat.label;
+                btn.onclick=()=>setCategory(key,btn);
+                container.appendChild(btn);
+            }
+        }
 
-        const words=getWords();
-        // pick random word, avoid recent repeats
-        if(usedIndices.length>=words.length)usedIndices=[];
-        let idx;
-        do{idx=Math.floor(Math.random()*words.length)}while(usedIndices.includes(idx));
-        usedIndices.push(idx);
-        currentWord=words[idx];
+        // ============ NAVIGATION ============
+        function showScreen(id){
+            document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+        function selectUser(name){
+            currentUser=name;
+            localStorage.setItem('ye_user',name);
+            showScreen('mainMenu');
+            document.getElementById('greeting').textContent='Halo, '+EMOJIS[name]+' '+name+'! 👋';
+            renderCategoryBtns();
+            resetScores();
+            playSound('click');
+        }
+        function backToWelcome(){
+            showScreen('welcomeScreen');
+            resetScores();
+        }
+        function backToMenu(){
+            showScreen('mainMenu');
+            document.getElementById('greeting').textContent='Halo, '+EMOJIS[currentUser]+' '+currentUser+'! 👋';
+            resetScores();
+        }
+        function goHome(){window.location.href='index.html'}
+        function goBerhitung(){window.location.href='belajar-berhitung.html'}
+        function resetScores(){
+            correctScore=0;wrongScore=0;streakScore=0;questionNumber=0;usedIndices=[];
+            updateScoreDisplay();
+        }
+        function updateScoreDisplay(){
+            ['correctScore','correctScore2'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=correctScore});
+            ['wrongScore','wrongScore2'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=wrongScore});
+            ['streakScore','streakScore2'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=streakScore});
+            ['levelBadge','levelBadge2'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='Level '+currentLevel});
+            ['questionCounter','questionCounter2'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='Soal '+questionNumber+'/'+questionsPerLevel});
+        }
 
-        if(mode==='picture')showPictureMode();
-        else if(mode==='translate')showTranslateMode();
-        else if(mode==='spelling')showSpellingMode();
-    }
+        function setMode(mode,ev){
+            currentMode=mode;
+            document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+            ev.target.classList.add('active');
+            playSound('click');
+            startGame();
+        }
+        function setCategory(cat,btn){
+            currentCategory=cat;
+            document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+            btn.classList.add('active');
+            playSound('click');
+        }
 
-    // ============ PICTURE MODE ============
-    function showPictureMode(){
-        document.getElementById('choiceArea').style.display='block';
-        document.getElementById('spellingArea').style.display='none';
-        document.getElementById('qEmoji').textContent=currentWord.emoji;
-        document.getElementById('qText').textContent='Apa nama ini dalam Bahasa Inggris?';
-        document.getElementById('qHint').textContent=CATEGORIES[currentCategory].label;
-        generateChoices(currentWord.en,'en');
-    }
+        function startGame(){
+            showScreen('gameScreen');
+            const ml=MODES.find(m=>m.key===currentMode)?.label||currentMode;
+            document.getElementById('greeting2').textContent=EMOJIS[currentUser]+' '+currentUser+' | '+ml+' | '+CATEGORIES[currentCategory].label;
+            resetScores();
+            nextQuestion();
+        }
+        function getWords(){return CATEGORIES[currentCategory].words}
 
-    // ============ TRANSLATE MODE ============
-    function showTranslateMode(){
-        document.getElementById('choiceArea').style.display='block';
-        document.getElementById('spellingArea').style.display='none';
-        const dir=Math.random()>.5;
-        if(dir){
-            // Indo → English
+        function nextQuestion(){
+            if(questionNumber>=questionsPerLevel){finishRound();return;}
+            questionNumber++;
+            isAnswering=false;
+            spellingAnswer='';
+            document.getElementById('feedback').textContent='';
+            document.getElementById('feedback').className='feedback';
+            updateScoreDisplay();
+
+            let mode=currentMode;
+            if(mode==='random'){const ms=['picture','translate','spelling'];mode=ms[Math.floor(Math.random()*ms.length)]}
+
+            const words=getWords();
+            if(usedIndices.length>=words.length)usedIndices=[];
+            let idx;
+            do{idx=Math.floor(Math.random()*words.length)}while(usedIndices.includes(idx));
+            usedIndices.push(idx);
+            currentWord=words[idx];
+
+            if(mode==='picture')showPicture();
+            else if(mode==='translate')showTranslate();
+            else if(mode==='spelling')showSpelling();
+        }
+
+        function showPicture(){
+            document.getElementById('choiceArea').style.display='block';
+            document.getElementById('spellingArea').style.display='none';
             document.getElementById('qEmoji').textContent=currentWord.emoji;
-            document.getElementById('qText').textContent=currentWord.id;
-            document.getElementById('qHint').textContent='Pilih terjemahan Bahasa Inggrisnya';
+            document.getElementById('qText').textContent='Apa bahasa Inggrisnya?';
+            document.getElementById('qHint').textContent=CATEGORIES[currentCategory].label;
             generateChoices(currentWord.en,'en');
-        }else{
-            // English → Indo
+        }
+
+        function showTranslate(){
+            document.getElementById('choiceArea').style.display='block';
+            document.getElementById('spellingArea').style.display='none';
+            const dir=Math.random()>0.5;
+            if(dir){
+                document.getElementById('qEmoji').textContent=currentWord.emoji;
+                document.getElementById('qText').textContent=currentWord.id;
+                document.getElementById('qHint').textContent='Pilih bahasa Inggrisnya';
+                generateChoices(currentWord.en,'en');
+            }else{
+                document.getElementById('qEmoji').textContent=currentWord.emoji;
+                document.getElementById('qText').textContent=currentWord.en;
+                document.getElementById('qHint').textContent='Pilih bahasa Indonesianya';
+                generateChoices(currentWord.id,'id');
+            }
+        }
+
+        function generateChoices(correctAnswer,field){
+            const words=getWords();
+            const choices=[correctAnswer];
+            const pool=words.map(w=>w[field]).filter(w=>w!==correctAnswer);
+            while(choices.length<3&&pool.length>0){
+                const ri=Math.floor(Math.random()*pool.length);
+                const pick=pool.splice(ri,1)[0];
+                if(!choices.includes(pick))choices.push(pick);
+            }
+            choices.sort(()=>Math.random()-0.5);
+            const container=document.getElementById('choiceBtns');
+            container.innerHTML='';
+            choices.forEach(c=>{
+                const btn=document.createElement('button');
+                btn.className='choice-btn';
+                btn.textContent=c;
+                btn.onclick=()=>checkChoice(c,correctAnswer,btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkChoice(chosen,correct,btn){
+            if(isAnswering)return;
+            isAnswering=true;
+            document.querySelectorAll('.choice-btn').forEach(b=>{b.disabled=true});
+            const area=document.getElementById('questionArea');
+            const fb=document.getElementById('feedback');
+            if(chosen===correct){
+                btn.classList.add('correct');
+                fb.textContent='🎉 Benar! '+currentWord.en+' = '+currentWord.id;
+                fb.className='feedback correct';
+                area.classList.add('celebrate');setTimeout(()=>area.classList.remove('celebrate'),400);
+                correctScore++;streakScore++;
+                playSound('correct');
+            }else{
+                btn.classList.add('wrong');
+                document.querySelectorAll('.choice-btn').forEach(b=>{if(b.textContent===correct)b.classList.add('correct')});
+                fb.textContent='😅 Jawaban: '+correct+' ('+currentWord.id+')';
+                fb.className='feedback incorrect';
+                area.classList.add('shake');setTimeout(()=>area.classList.remove('shake'),400);
+                wrongScore++;streakScore=0;
+                playSound('wrong');
+            }
+            updateScoreDisplay();
+            setTimeout(nextQuestion,1500);
+        }
+
+        // ============ SPELLING ============
+        function showSpelling(){
+            document.getElementById('choiceArea').style.display='none';
+            document.getElementById('spellingArea').style.display='block';
             document.getElementById('qEmoji').textContent=currentWord.emoji;
-            document.getElementById('qText').textContent=currentWord.en;
-            document.getElementById('qHint').textContent='Pilih terjemahan Bahasa Indonesianya';
-            generateChoices(currentWord.id,'id');
-        }
-    }
-
-    function generateChoices(correctAnswer,field){
-        const words=getWords();
-        const choices=[correctAnswer];
-        const pool=words.map(w=>w[field]).filter(w=>w!==correctAnswer);
-        while(choices.length<3&&pool.length>0){
-            const ri=Math.floor(Math.random()*pool.length);
-            const pick=pool.splice(ri,1)[0];
-            if(!choices.includes(pick))choices.push(pick);
-        }
-        choices.sort(()=>Math.random()-.5);
-        const container=document.getElementById('choiceBtns');
-        container.innerHTML='';
-        choices.forEach(c=>{
-            const btn=document.createElement('button');
-            btn.className='choice-btn';
-            btn.textContent=c;
-            btn.onclick=()=>checkChoice(c,correctAnswer,btn);
-            container.appendChild(btn);
-        });
-    }
-
-    function checkChoice(chosen,correct,btn){
-        if(isAnswering)return;
-        isAnswering=true;
-        document.querySelectorAll('.choice-btn').forEach(b=>{b.disabled=true});
-        const area=document.getElementById('questionArea');
-        const fb=document.getElementById('feedback');
-        if(chosen===correct){
-            btn.classList.add('correct');
-            fb.textContent='Benar! 🎉 '+currentWord.en+' = '+currentWord.id;
-            fb.className='feedback correct';
-            area.classList.add('celebrate');setTimeout(()=>area.classList.remove('celebrate'),400);
-            correctScore++;streakScore++;
-            playSound('correct');
-        }else{
-            btn.classList.add('wrong');
-            document.querySelectorAll('.choice-btn').forEach(b=>{if(b.textContent===correct)b.classList.add('correct')});
-            fb.textContent='Salah! Jawaban: '+correct+' ('+currentWord.id+')';
-            fb.className='feedback incorrect';
-            area.classList.add('shake');setTimeout(()=>area.classList.remove('shake'),400);
-            wrongScore++;streakScore=0;
-            playSound('wrong');
-        }
-        updateScoreDisplay();
-        setTimeout(nextQuestion,1500);
-    }
-
-    // ============ SPELLING MODE ============
-    function showSpellingMode(){
-        document.getElementById('choiceArea').style.display='none';
-        document.getElementById('spellingArea').style.display='block';
-        document.getElementById('qEmoji').textContent=currentWord.emoji;
-        document.getElementById('qText').textContent='Susun huruf: '+currentWord.id;
-        document.getElementById('qHint').textContent='Klik huruf untuk menyusun kata Inggris';
-        spellingTarget=currentWord.en.toUpperCase();
-        spellingAnswer='';
-        renderSpelling();
-    }
-
-    function renderSpelling(){
-        // Slots
-        const slotsEl=document.getElementById('spellingSlots');
-        slotsEl.innerHTML='';
-        for(let i=0;i<spellingTarget.length;i++){
-            const slot=document.createElement('div');
-            slot.className='spelling-slot'+(i<spellingAnswer.length?' filled':'');
-            slot.textContent=i<spellingAnswer.length?spellingAnswer[i]:'';
-            slotsEl.appendChild(slot);
-        }
-        // Letter buttons (shuffled)
-        const letters=[...spellingTarget].sort(()=>Math.random()-.5);
-        const btnsEl=document.getElementById('letterBtns');
-        btnsEl.innerHTML='';
-        const usedCount={};
-        letters.forEach(l=>{
-            const btn=document.createElement('button');
-            btn.className='letter-btn';
-            btn.textContent=l;
-            const count=(usedCount[l]||0);
-            usedCount[l]=count+1;
-            // disable if this letter already fully used in answer
-            const usedSoFar=[...spellingAnswer].filter(c=>c===l).length;
-            const totalAvailable=spellingTarget.split('').filter(c=>c===l).length;
-            btn.disabled=usedSoFar>=totalAvailable;
-            btn.onclick=()=>{spellingAnswer+=l;renderSpelling()};
-            btnsEl.appendChild(btn);
-        });
-    }
-
-    function spellingDelete(){
-        if(spellingAnswer.length>0){
-            spellingAnswer=spellingAnswer.slice(0,-1);
+            document.getElementById('qText').textContent='Susun huruf: '+currentWord.id;
+            document.getElementById('qHint').textContent='Klik huruf untuk menyusun kata Inggris';
+            spellingTarget=currentWord.en.toUpperCase();
+            spellingAnswer='';
             renderSpelling();
         }
-    }
 
-    function spellingSubmit(){
-        if(isAnswering||spellingAnswer.length!==spellingTarget.length)return;
-        isAnswering=true;
-        const area=document.getElementById('questionArea');
-        const fb=document.getElementById('feedback');
-        if(spellingAnswer===spellingTarget){
-            fb.textContent='Benar! 🎉 '+currentWord.en;
-            fb.className='feedback correct';
-            area.classList.add('celebrate');setTimeout(()=>area.classList.remove('celebrate'),400);
-            correctScore++;streakScore++;
-            playSound('correct');
-        }else{
-            fb.textContent='Salah! Jawaban: '+spellingTarget+' ('+currentWord.id+')';
-            fb.className='feedback incorrect';
-            area.classList.add('shake');setTimeout(()=>area.classList.remove('shake'),400);
-            wrongScore++;streakScore=0;
-            playSound('wrong');
-        }
-        updateScoreDisplay();
-        setTimeout(nextQuestion,1500);
-    }
-
-    // ============ ROUND END ============
-    function finishRound(){
-        updateScore(currentUser,currentMode,currentLevel,correctScore);
-        const fb=document.getElementById('feedback');
-        if(correctScore>=7){
-            fb.textContent='🎉 Luar Biasa! '+correctScore+'/'+questionsPerLevel;
-            fb.className='feedback correct';
-            if(currentLevel<3){
-                currentLevel++;
-                fb.textContent+=' → Naik ke Level '+currentLevel+'! 🌟';
-            }else{
-                fb.textContent+=' → Max Level! 🏆';
+        function renderSpelling(){
+            const slotsEl=document.getElementById('spellingSlots');
+            slotsEl.innerHTML='';
+            for(let i=0;i<spellingTarget.length;i++){
+                const slot=document.createElement('div');
+                slot.className='spelling-slot'+(i<spellingAnswer.length?' filled':'');
+                slot.textContent=i<spellingAnswer.length?spellingAnswer[i]:'';
+                slotsEl.appendChild(slot);
             }
-        }else{
-            fb.textContent='Skor: '+correctScore+'/'+questionsPerLevel+'. Coba lagi! 💪';
-            fb.className='feedback incorrect';
-        }
-        document.getElementById('qEmoji').textContent='🎉';
-        document.getElementById('qText').textContent='Ronde Selesai!';
-        document.getElementById('qHint').textContent='';
-        document.getElementById('choiceArea').style.display='none';
-        document.getElementById('spellingArea').style.display='none';
-        // Reset for next round
-        setTimeout(()=>{
-            questionNumber=0;correctScore=0;wrongScore=0;streakScore=0;usedIndices=[];
-            updateScoreDisplay();
-            nextQuestion();
-        },2500);
-    }
-
-    // ============ LEADERBOARD MODAL ============
-    function showLeaderboard(){
-        const lb=getLeaderboard();
-        let html='';
-        let hasData=false;
-        USERS.forEach(user=>{
-            MODES.forEach(mode=>{
-                for(let l=1;l<=3;l++){
-                    const key=getScoreKey(user,mode.key,l);
-                    if(lb[key]){
-                        hasData=true;
-                        html+='<div class="lb-row"><span class="name">'+EMOJIS[user]+' '+user+' | '+mode.label+' | L'+l+'</span><span class="pts">'+lb[key]+' pts</span></div>';
-                    }
-                }
+            const letters=[...spellingTarget].sort(()=>Math.random()-0.5);
+            const btnsEl=document.getElementById('letterBtns');
+            btnsEl.innerHTML='';
+            letters.forEach(l=>{
+                const btn=document.createElement('button');
+                btn.className='letter-btn';
+                btn.textContent=l;
+                const usedSoFar=[...spellingAnswer].filter(c=>c===l).length;
+                const totalAvailable=spellingTarget.split('').filter(c=>c===l).length;
+                btn.disabled=usedSoFar>=totalAvailable;
+                btn.onclick=()=>{spellingAnswer+=l;renderSpelling()};
+                btnsEl.appendChild(btn);
             });
-        });
-        if(!hasData)html='<p style="color:#888;text-align:center">Belum ada skor. Ayo bermain! 🎮</p>';
-        document.getElementById('lbContent').innerHTML=html;
-        document.getElementById('lbModal').classList.add('show');
-    }
-    function closeLB(){document.getElementById('lbModal').classList.remove('show')}
+        }
 
-    // ============ INIT ============
-    (function(){
-        const saved=localStorage.getItem('ye_user');
-        if(saved){selectUser(saved)}
-    })();
+        function spellingDelete(){
+            if(spellingAnswer.length>0){spellingAnswer=spellingAnswer.slice(0,-1);renderSpelling()}
+        }
+
+        function spellingSubmit(){
+            if(isAnswering||spellingAnswer.length!==spellingTarget.length)return;
+            isAnswering=true;
+            const area=document.getElementById('questionArea');
+            const fb=document.getElementById('feedback');
+            if(spellingAnswer===spellingTarget){
+                fb.textContent='🎉 Benar! '+currentWord.en;
+                fb.className='feedback correct';
+                area.classList.add('celebrate');setTimeout(()=>area.classList.remove('celebrate'),400);
+                correctScore++;streakScore++;
+                playSound('correct');
+            }else{
+                fb.textContent='😅 Jawaban: '+spellingTarget+' ('+currentWord.id+')';
+                fb.className='feedback incorrect';
+                area.classList.add('shake');setTimeout(()=>area.classList.remove('shake'),400);
+                wrongScore++;streakScore=0;
+                playSound('wrong');
+            }
+            updateScoreDisplay();
+            setTimeout(nextQuestion,1500);
+        }
+
+        // ============ ROUND END ============
+        function finishRound(){
+            updateScore(currentUser,currentMode,currentLevel,correctScore);
+            const fb=document.getElementById('feedback');
+            document.getElementById('qEmoji').textContent='🎉';
+            document.getElementById('qText').textContent='Ronde Selesai!';
+            document.getElementById('qHint').textContent='';
+            document.getElementById('choiceArea').style.display='none';
+            document.getElementById('spellingArea').style.display='none';
+
+            if(correctScore>=7){
+                fb.textContent='🎉 Luar Biasa! '+correctScore+'/'+questionsPerLevel;
+                fb.className='feedback correct';
+                if(currentLevel<3){
+                    currentLevel++;
+                    fb.textContent+=' → Naik Level '+currentLevel+'! 🌟';
+                }else{
+                    fb.textContent+=' → Max Level! 🏆';
+                }
+            }else{
+                fb.textContent='Skor: '+correctScore+'/'+questionsPerLevel+'. Coba lagi! 💪';
+                fb.className='feedback incorrect';
+            }
+
+            setTimeout(()=>{
+                questionNumber=0;correctScore=0;wrongScore=0;streakScore=0;usedIndices=[];
+                updateScoreDisplay();
+                nextQuestion();
+            },3000);
+        }
+
+        // ============ LEADERBOARD ============
+        function showLeaderboard(){
+            const lb=getLeaderboard();
+            let html='';let hasData=false;
+            USERS.forEach(user=>{
+                MODES.forEach(mode=>{
+                    for(let l=1;l<=3;l++){
+                        const key=getScoreKey(user,mode.key,l);
+                        if(lb[key]){
+                            hasData=true;
+                            html+='<div class="lb-row"><span>'+EMOJIS[user]+' '+user+' | '+mode.label+' L'+l+'</span><span class="lb-pts">'+lb[key]+' pts</span></div>';
+                        }
+                    }
+                });
+            });
+            if(!hasData)html='<p style="color:rgba(255,255,255,0.4);text-align:center">Belum ada skor. Ayo bermain! 🎮</p>';
+            document.getElementById('lbContent').innerHTML=html;
+            document.getElementById('lbModal').classList.add('show');
+        }
+        function closeLB(){document.getElementById('lbModal').classList.remove('show')}
+
+        // ============ INIT ============
+        (function(){
+            const saved=localStorage.getItem('ye_user');
+            if(saved){selectUser(saved)}
+        })();
+
+        window.selectUser=selectUser;
+        window.backToWelcome=backToWelcome;
+        window.backToMenu=backToMenu;
+        window.goHome=goHome;
+        window.goBerhitung=goBerhitung;
+        window.setMode=setMode;
+        window.setCategory=setCategory;
+        window.startGame=startGame;
+        window.nextQuestion=nextQuestion;
+        window.checkChoice=checkChoice;
+        window.spellingDelete=spellingDelete;
+        window.spellingSubmit=spellingSubmit;
+        window.showLeaderboard=showLeaderboard;
+        window.closeLB=closeLB;
     </script>
 </body>
 </html>

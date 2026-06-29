@@ -4,113 +4,286 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎓 YUSUF Apps - Belajar Jadi Seru!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Nunito', system-ui, -apple-system, sans-serif;
             min-height: 100vh;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            overflow-x: hidden;
+            position: relative;
         }
+
+        /* Animated background particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: float linear infinite;
+            opacity: 0.15;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.15; }
+            90% { opacity: 0.15; }
+            100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+        }
+
         .container {
-            background: #fff;
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 500px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 32px;
+            padding: 48px 40px;
+            max-width: 520px;
             width: 100%;
             text-align: center;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+            animation: containerIn 0.8s ease-out;
         }
+
+        @keyframes containerIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .logo {
+            font-size: 3.5em;
+            margin-bottom: 4px;
+            display: block;
+            animation: logoBounce 3s ease-in-out infinite;
+        }
+
+        @keyframes logoBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
         h1 {
-            color: #667eea;
-            font-size: 2.2em;
-            margin-bottom: 10px;
+            color: #fff;
+            font-size: 2.4em;
+            font-weight: 900;
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #ffd86f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .emoji-big {
-            font-size: 4em;
-            margin: 20px 0;
-        }
+
         .subtitle {
-            color: #666;
+            color: rgba(255, 255, 255, 0.6);
             font-size: 1.1em;
-            margin-bottom: 30px;
+            font-weight: 600;
+            margin-bottom: 36px;
         }
+
         .app-cards {
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
+
         .app-card {
-            padding: 25px;
-            border-radius: 16px;
+            padding: 28px 24px;
+            border-radius: 20px;
             text-decoration: none;
             color: #fff;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            display: block;
         }
+
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            border-radius: 20px;
+        }
+
         .app-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: translateY(-6px) scale(1.02);
         }
+
+        .app-card:active {
+            transform: translateY(-2px) scale(0.98);
+        }
+
         .app-card.berhitung {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 8px 30px rgba(245, 87, 108, 0.35);
         }
+
+        .app-card.berhitung:hover {
+            box-shadow: 0 12px 40px rgba(245, 87, 108, 0.5);
+        }
+
         .app-card.english {
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            box-shadow: 0 8px 30px rgba(56, 239, 125, 0.3);
         }
-        .app-card h2 {
-            font-size: 1.4em;
+
+        .app-card.english:hover {
+            box-shadow: 0 12px 40px rgba(56, 239, 125, 0.45);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
             margin-bottom: 8px;
         }
-        .app-card p {
-            font-size: 0.95em;
-            opacity: 0.9;
+
+        .card-icon {
+            font-size: 2.2em;
+            width: 56px;
+            height: 56px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
+
+        .card-header h2 {
+            font-size: 1.5em;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        .card-desc {
+            font-size: 0.95em;
+            opacity: 0.85;
+            margin-bottom: 14px;
+            text-align: left;
+            padding-left: 70px;
+        }
+
         .features {
             display: flex;
             gap: 8px;
-            justify-content: center;
             flex-wrap: wrap;
-            margin-top: 12px;
+            padding-left: 70px;
         }
+
         .feature {
-            background: rgba(255,255,255,0.2);
-            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.18);
+            padding: 5px 12px;
             border-radius: 20px;
-            font-size: 0.8em;
+            font-size: 0.82em;
+            font-weight: 700;
+            backdrop-filter: blur(4px);
+            transition: transform 0.2s;
         }
+
+        .feature:hover {
+            transform: scale(1.1);
+        }
+
+        .card-shine {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
         .footer {
-            margin-top: 30px;
-            color: #999;
+            margin-top: 32px;
+            color: rgba(255, 255, 255, 0.35);
             font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .footer span {
+            display: inline-block;
+            animation: heartBeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.2); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.15); }
+            60% { transform: scale(1); }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container { padding: 32px 20px; border-radius: 24px; }
+            h1 { font-size: 1.8em; }
+            .logo { font-size: 2.8em; }
+            .card-header h2 { font-size: 1.3em; }
+            .card-desc { padding-left: 0; }
+            .features { padding-left: 0; }
+            .card-icon { width: 48px; height: 48px; font-size: 1.8em; }
         }
     </style>
 </head>
 <body>
+    <!-- Animated Particles -->
+    <div class="particles" id="particles"></div>
+
     <div class="container">
-        <h1>🎓 YUSUF Apps</h1>
-        <div class="emoji-big">📚✨</div>
+        <span class="logo">📚✨</span>
+        <h1>YUSUF Apps</h1>
         <p class="subtitle">Belajar jadi seru untuk anak-anak!</p>
-        
+
         <div class="app-cards">
             <a href="belajar-berhitung.html" class="app-card berhitung">
-                <h2>🔢 Berhitung</h2>
-                <p>Belajar matematika dengan cara yang menyenangkan</p>
+                <div class="card-shine"></div>
+                <div class="card-header">
+                    <div class="card-icon">🔢</div>
+                    <h2>Berhitung</h2>
+                </div>
+                <p class="card-desc">Belajar matematika dengan cara yang menyenangkan</p>
                 <div class="features">
                     <span class="feature">➕ Tambah</span>
                     <span class="feature">➖ Kurang</span>
                     <span class="feature">✖️ Kali</span>
                     <span class="feature">➗ Bagi</span>
+                    <span class="feature">🧠 Memori</span>
                     <span class="feature">🎲 Acak</span>
                 </div>
             </a>
-            
+
             <a href="belajar-english.html" class="app-card english">
-                <h2>📚 English</h2>
-                <p>Belajar bahasa Inggris dengan cara yang seru</p>
+                <div class="card-shine"></div>
+                <div class="card-header">
+                    <div class="card-icon">📖</div>
+                    <h2>English</h2>
+                </div>
+                <p class="card-desc">Belajar bahasa Inggris dengan cara yang seru</p>
                 <div class="features">
                     <span class="feature">🖼️ Gambar</span>
                     <span class="feature">🔄 Translate</span>
@@ -119,8 +292,27 @@
                 </div>
             </a>
         </div>
-        
-        <p class="footer">🌊 Dibuat dengan ❤️ untuk anak-anak Indonesia</p>
+
+        <p class="footer">Dibuat dengan <span>❤️</span> untuk anak-anak Indonesia</p>
     </div>
+
+    <script>
+        // Animated particles
+        const particlesContainer = document.getElementById('particles');
+        const colors = ['#f093fb', '#f5576c', '#38ef7d', '#11998e', '#ffd86f', '#667eea', '#764ba2'];
+
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            const size = Math.random() * 8 + 4;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+            particle.style.animationDuration = (Math.random() * 15 + 10) + 's';
+            particle.style.animationDelay = (Math.random() * 15) + 's';
+            particlesContainer.appendChild(particle);
+        }
+    </script>
 </body>
 </html>
