@@ -250,7 +250,7 @@
                     <button class="user-btn" onclick="selectUser('Yusuf')"><span class="u-emoji">👦</span>Yusuf</button>
                     <button class="user-btn" onclick="selectUser('Musa')"><span class="u-emoji">🧒</span>Musa</button>
                     <button class="user-btn" onclick="selectUser('Aisha')"><span class="u-emoji">👧</span>Aisha</button>
-                    <button class="user-btn" onclick="selectUser('Umum')"><span class="u-emoji">🌐</span>Umum</button>
+                    <button class="user-btn" onclick="selectUmum()"><span class="u-emoji">🌐</span>Umum</button>
                 </div>
                 <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
                     <button class="btn btn-ghost" onclick="backToHome()">🏠 Beranda</button>
@@ -507,12 +507,21 @@
             document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
-        function selectUser(name){
+        function selectUmum(){
+            const customName = prompt('Masukkan nama kamu:', '');
+            if (customName && customName.trim()) {
+                const name = customName.trim();
+                localStorage.setItem('yusuf_custom_name', name);
+                selectUser(name, true);
+            }
+        }
+        function selectUser(name, isCustom){
             currentUser=name;
             localStorage.setItem('yusuf_user',name);
+            const emoji = EMOJIS[name] || '🌐';
             document.getElementById('welcomeOverlay').classList.add('hidden');
             showScreen('mainMenu');
-            document.getElementById('greeting').textContent='Halo, '+EMOJIS[name]+' '+name+'! 👋';
+            document.getElementById('greeting').textContent='Halo, '+emoji+' '+name+'! 👋';
             resetScores();
             playSound('click');
         }
@@ -522,7 +531,8 @@
         }
         function backToMenu(){
             showScreen('mainMenu');
-            document.getElementById('greeting').textContent='Halo, '+EMOJIS[currentUser]+' '+currentUser+'! 👋';
+            const emoji = EMOJIS[currentUser] || '🌐';
+            document.getElementById('greeting').textContent='Halo, '+emoji+' '+currentUser+'! 👋';
             resetScores();
         }
         function backToHome(){window.location.href='index.html'}
@@ -563,7 +573,8 @@
             showScreen('gameScreen');
             const modeLabel=MODES.find(m=>m.key===currentMode)?.label||currentMode;
             const diffLabel={easy:'🌟 Mudah',medium:'🌟🌟 Sedang',hard:'🌟🌟🌟 Sulit'}[currentDifficulty]||'';
-            document.getElementById('greeting2').textContent=EMOJIS[currentUser]+' '+currentUser+' | '+modeLabel+(currentMode!=='memory'?' '+diffLabel:'');
+            const emoji = EMOJIS[currentUser] || '🌐';
+            document.getElementById('greeting2').textContent=emoji+' '+currentUser+' | '+modeLabel+(currentMode!=='memory'?' '+diffLabel:'');
             resetScores();
             nextQuestion();
         }
@@ -844,7 +855,7 @@
         async function showProgress(){
             const stats=await getUserStats(currentUser);
             const html=`
-                <div class="lb-row"><span>👤 User</span><span>${EMOJIS[currentUser]} ${currentUser}</span></div>
+                <div class="lb-row"><span>👤 User</span><span>${EMOJIS[currentUser]||'🌐'} ${currentUser}</span></div>
                 <div class="lb-row"><span>✅ Total Benar</span><span class="lb-pts">${stats.totalCorrect||0}</span></div>
                 <div class="lb-row"><span>❌ Total Salah</span><span style="color:#f5576c;font-weight:800">${stats.totalWrong||0}</span></div>
                 <div class="lb-row"><span>🎮 Sesi Bermain</span><span>${stats.totalSessions||0}</span></div>
@@ -873,6 +884,7 @@
 
         // Expose functions globally
         window.selectUser=selectUser;
+        window.selectUmum=selectUmum;
         window.backToWelcome=backToWelcome;
         window.backToMenu=backToMenu;
         window.backToHome=backToHome;

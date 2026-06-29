@@ -185,7 +185,7 @@
                 <button class="user-btn" onclick="selectUser('Yusuf')">👦 Yusuf</button>
                 <button class="user-btn" onclick="selectUser('Musa')">🧒 Musa</button>
                 <button class="user-btn" onclick="selectUser('Aisha')">👧 Aisha</button>
-                <button class="user-btn" onclick="selectUser('Umum')">🌐 Umum</button>
+                <button class="user-btn" onclick="selectUmum()">🌐 Umum</button>
             </div>
             <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px">
                 <button class="btn btn-ghost" onclick="goHome()">🏠 Beranda</button>
@@ -392,11 +392,20 @@
             document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
-        function selectUser(name){
+        function selectUmum(){
+            const customName = prompt('Masukkan nama kamu:', '');
+            if (customName && customName.trim()) {
+                const name = customName.trim();
+                localStorage.setItem('ye_custom_name', name);
+                selectUser(name, true);
+            }
+        }
+        function selectUser(name, isCustom){
             currentUser=name;
             localStorage.setItem('ye_user',name);
+            const emoji = EMOJIS[name] || '🌐';
             showScreen('mainMenu');
-            document.getElementById('greeting').textContent='Halo, '+EMOJIS[name]+' '+name+'! 👋';
+            document.getElementById('greeting').textContent='Halo, '+emoji+' '+name+'! 👋';
             renderCategoryBtns();
             resetScores();
             playSound('click');
@@ -407,7 +416,8 @@
         }
         function backToMenu(){
             showScreen('mainMenu');
-            document.getElementById('greeting').textContent='Halo, '+EMOJIS[currentUser]+' '+currentUser+'! 👋';
+            const emoji = EMOJIS[currentUser] || '🌐';
+            document.getElementById('greeting').textContent='Halo, '+emoji+' '+currentUser+'! 👋';
             resetScores();
         }
         function goHome(){window.location.href='index.html'}
@@ -441,7 +451,8 @@
         function startGame(){
             showScreen('gameScreen');
             const ml=MODES.find(m=>m.key===currentMode)?.label||currentMode;
-            document.getElementById('greeting2').textContent=EMOJIS[currentUser]+' '+currentUser+' | '+ml+' | '+CATEGORIES[currentCategory].label;
+            const emoji = EMOJIS[currentUser] || '🌐';
+            document.getElementById('greeting2').textContent=emoji+' '+currentUser+' | '+ml+' | '+CATEGORIES[currentCategory].label;
             resetScores();
             nextQuestion();
         }
@@ -665,6 +676,7 @@
         })();
 
         window.selectUser=selectUser;
+        window.selectUmum=selectUmum;
         window.backToWelcome=backToWelcome;
         window.backToMenu=backToMenu;
         window.goHome=goHome;
