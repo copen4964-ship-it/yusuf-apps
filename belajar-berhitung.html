@@ -953,7 +953,7 @@
             if(correctScore>=7){
                 fb.textContent='🎉 Luar Biasa! Skor: '+correctScore+'/'+questionsPerLevel+'!';
                 fb.className='feedback correct';
-                if(currentLevel<3&&currentMode!=='memory'){
+                if(currentLevel<3){
                     currentLevel++;
                     fb.textContent+=' → Naik ke Level '+(currentLevel)+'! 🌟';
                     const diffMap={1:'easy',2:'medium',3:'hard'};
