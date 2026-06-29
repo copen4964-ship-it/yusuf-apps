@@ -540,10 +540,12 @@
             playSound('click');
         }
         function backToWelcome(){
+            clearTimer();
             document.getElementById('welcomeOverlay').classList.remove('hidden');
             resetScores();
         }
         function backToMenu(){
+            clearTimer();
             showScreen('mainMenu');
             const emoji = EMOJIS[currentUser] || '🌐';
             document.getElementById('greeting').textContent='Halo, '+emoji+' '+currentUser+'! 👋';
@@ -598,6 +600,8 @@
         function timeOut(){
             if (isAnswering) return;
             isAnswering = true;
+            // Check if still on game screen
+            if (!document.getElementById('gameScreen').classList.contains('active')) return;
             document.querySelectorAll('.choice-btn').forEach(b => { b.disabled = true });
             const fb = document.getElementById('feedback');
             fb.textContent = '⏰ Waktu habis! Jawaban: ' + correctAnswer;
@@ -632,6 +636,7 @@
 
         // ============ GAME ============
         function startGame(){
+            clearTimer();
             showScreen('gameScreen');
             const modeLabel=MODES.find(m=>m.key===currentMode)?.label||currentMode;
             const diffLabel={easy:'🌟 Mudah',medium:'🌟🌟 Sedang',hard:'🌟🌟🌟 Sulit'}[currentDifficulty]||'';
@@ -843,11 +848,8 @@
                 wrongScore++;streakScore=0;
                 playSound('wrong');
                 updateScoreDisplay();
-                setTimeout(()=>{
-                    memoryPlayerIndex=0;
-                    isAnswering=false;
-                    renderMemoryGame(true);
-                },1500);
+                // Advance question and show next after delay
+                document.getElementById('nextBtn').style.display='block';
             }
         }
 
@@ -886,10 +888,10 @@
             }
             updateScoreDisplay();
 
+            // Don't auto-restart — go back to menu so user can choose
             setTimeout(()=>{
-                questionNumber=0;correctScore=0;wrongScore=0;streakScore=0;
-                updateScoreDisplay();
-                nextQuestion();
+                clearTimer();
+                backToMenu();
             },3000);
         }
 
