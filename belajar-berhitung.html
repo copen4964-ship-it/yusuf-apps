@@ -201,6 +201,53 @@
         }
         .memory-card:hover { transform: scale(1.05); }
 
+        /* Music Memory game */
+        .music-memory-container {
+            display: flex; flex-direction: column; align-items: center; gap: 16px;
+            margin: 12px 0;
+        }
+        .music-memory-info {
+            text-align: center; color: rgba(255,255,255,0.7); font-size: 0.9em; font-weight: 600;
+        }
+        .music-memory-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+            max-width: 280px; margin: 0 auto;
+        }
+        .music-btn {
+            aspect-ratio: 1; border-radius: 20px; border: 3px solid rgba(255,255,255,0.2);
+            cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden;
+            font-size: 2.5em; display: flex; align-items: center; justify-content: center;
+        }
+        .music-btn.red { background: linear-gradient(135deg, #f5576c, #ff6b6b); }
+        .music-btn.blue { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .music-btn.green { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .music-btn.yellow { background: linear-gradient(135deg, #ffd86f, #f093fb); }
+        .music-btn:hover { transform: scale(1.05); }
+        .music-btn:active { transform: scale(0.95); }
+        .music-btn.lit {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px currentColor;
+            filter: brightness(1.3);
+        }
+        .music-btn.red.lit { box-shadow: 0 0 30px #f5576c; }
+        .music-btn.blue.lit { box-shadow: 0 0 30px #667eea; }
+        .music-btn.green.lit { box-shadow: 0 0 30px #38ef7d; }
+        .music-btn.yellow.lit { box-shadow: 0 0 30px #ffd86f; }
+        .music-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+        .music-memory-status {
+            text-align: center; font-size: 1.1em; font-weight: 700; color: #fff;
+            min-height: 30px;
+        }
+        .music-memory-sequence {
+            display: flex; gap: 8px; justify-content: center; margin: 8px 0;
+        }
+        .sequence-dot {
+            width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.2);
+            transition: all 0.3s;
+        }
+        .sequence-dot.active { background: #38ef7d; transform: scale(1.2); }
+        .sequence-dot.current { background: #ffd86f; transform: scale(1.3); }
+
         /* Sound toggle */
         .sound-toggle {
             position: fixed; top: 16px; right: 16px; z-index: 100;
@@ -318,6 +365,7 @@
                 <button class="mode-btn" onclick="setMode('multiply',event)">✖️ Kali</button>
                 <button class="mode-btn" onclick="setMode('divide',event)">➗ Bagi</button>
                 <button class="mode-btn" onclick="setMode('memory',event)">🧠 Memori</button>
+                <button class="mode-btn" onclick="setMode('music',event)">🎵 Musik</button>
                 <button class="mode-btn active" onclick="setMode('random',event)">🎲 Acak</button>
             </div>
 
@@ -380,6 +428,19 @@
             <div class="memory-timer" id="memoryTimer" style="display:none"></div>
             <div class="memory-stats" id="memoryStats" style="display:none"></div>
             <div class="memory-grid" id="memoryGrid" style="display:none"></div>
+            
+            <!-- Music Memory Game -->
+            <div class="music-memory-container" id="musicMemoryContainer" style="display:none">
+                <div class="music-memory-info" id="musicMemoryInfo">🎵 Music Memory</div>
+                <div class="music-memory-sequence" id="musicSequence"></div>
+                <div class="music-memory-status" id="musicStatus">Dengarkan urutan nada...</div>
+                <div class="music-memory-grid" id="musicGrid">
+                    <button class="music-btn red" id="musicBtn0" onclick="musicBtnClick(0)" disabled>🎵</button>
+                    <button class="music-btn blue" id="musicBtn1" onclick="musicBtnClick(1)" disabled>🎶</button>
+                    <button class="music-btn green" id="musicBtn2" onclick="musicBtnClick(2)" disabled>🎸</button>
+                    <button class="music-btn yellow" id="musicBtn3" onclick="musicBtnClick(3)" disabled>🎹</button>
+                </div>
+            </div>
 
             <div class="float-btns">
                 <button class="float-btn" onclick="showLeaderboard()">🏆 High Score</button>
@@ -449,7 +510,8 @@
         const MODES = [
             {key:'add',label:'➕ Tambah'},{key:'subtract',label:'➖ Kurang'},
             {key:'multiply',label:'✖️ Kali'},{key:'divide',label:'➗ Bagi'},
-            {key:'memory',label:'🧠 Memori'},{key:'random',label:'🎲 Acak'}
+            {key:'memory',label:'🧠 Memori'},{key:'music',label:'🎵 Musik'},
+            {key:'random',label:'🎲 Acak'}
         ];
         const BADGES = [
             {id:'firstPlay',name:'🎮 First Play',desc:'Main pertama kali',check:s=>s.totalSessions>=1},
@@ -654,7 +716,7 @@
             currentMode=mode;
             document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
             ev.target.classList.add('active');
-            document.getElementById('difficultySection').style.display=(mode==='memory'?'none':'flex');
+            document.getElementById('difficultySection').style.display=(mode==='memory'||mode==='music'?'none':'flex');
             playSound('click');
             startGame();
         }
@@ -694,16 +756,18 @@
             document.getElementById('nextBtn').style.display='none';
             document.getElementById('memoryTimer').style.display='none';
             document.getElementById('memoryGrid').style.display='none';
+            document.getElementById('musicMemoryContainer').style.display='none';
             isMemoryMode=false;
             updateScoreDisplay();
 
             let mode=currentMode;
             if(mode==='random'){
-                const opts=['add','subtract','multiply','divide','memory'];
+                const opts=['add','subtract','multiply','divide','memory','music'];
                 mode=opts[Math.floor(Math.random()*opts.length)];
             }
 
             if(mode==='memory'){startMemoryGame();return;}
+            if(mode==='music'){startMusicMemory();return;}
 
             const [min,max]=getDifficultyRange();
             let a,b,op,answer;
@@ -807,6 +871,9 @@
             memoryMoves=0;
             flippedCards=[];
             isCheckingMemory=false;
+
+            // Hide music memory container
+            document.getElementById('musicMemoryContainer').style.display='none';
 
             // Set pairs based on difficulty
             const pairCounts={easy:4,medium:6,hard:8};
@@ -935,6 +1002,246 @@
             }
         }
 
+        // ============ MUSIC MEMORY GAME ============
+        const MUSIC_NOTES = [261.63, 329.63, 392.00, 523.25]; // C4, E4, G4, C5
+        const MUSIC_COLORS = ['red', 'blue', 'green', 'yellow'];
+        let musicSequence = [];
+        let musicPlayerSequence = [];
+        let musicLevel = 1;
+        let musicMaxLevel = 10;
+        let isMusicPlaying = false;
+        let isMusicWaiting = false;
+
+        function startMusicMemory() {
+            isMemoryMode = true;
+            musicSequence = [];
+            musicLevel = 1;
+            musicMaxLevel = 10;
+
+            // Update UI
+            document.getElementById('question').textContent = '🎵 Music Memory!';
+            document.getElementById('emojiDisplay').textContent = '';
+            document.getElementById('hintText').textContent = 'Dengarkan dan ulangi urutan nada!';
+            document.getElementById('choiceButtons').innerHTML = '';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+
+            // Hide other game elements
+            document.getElementById('memoryTimer').style.display = 'none';
+            document.getElementById('memoryStats').style.display = 'none';
+            document.getElementById('memoryGrid').style.display = 'none';
+
+            // Show music memory container
+            document.getElementById('musicMemoryContainer').style.display = 'flex';
+            updateMusicInfo();
+            updateMusicSequence();
+
+            // Start first round
+            setTimeout(() => nextMusicRound(), 1000);
+        }
+
+        function updateMusicInfo() {
+            document.getElementById('musicMemoryInfo').textContent = '🎵 Level ' + musicLevel + '/' + musicMaxLevel;
+        }
+
+        function updateMusicSequence() {
+            const container = document.getElementById('musicSequence');
+            container.innerHTML = '';
+            for (let i = 0; i < musicLevel; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'sequence-dot';
+                dot.id = 'seqDot' + i;
+                container.appendChild(dot);
+            }
+        }
+
+        function nextMusicRound() {
+            if (musicLevel > musicMaxLevel) {
+                // Game complete!
+                finishMusicGame(true);
+                return;
+            }
+
+            musicPlayerSequence = [];
+            isMusicWaiting = false;
+
+            // Add new random note to sequence
+            const newNote = Math.floor(Math.random() * 4);
+            musicSequence.push(newNote);
+
+            updateMusicInfo();
+            updateMusicSequence();
+            document.getElementById('musicStatus').textContent = '👀 Perhatikan!';
+
+            // Play sequence
+            setTimeout(() => playMusicSequence(), 500);
+        }
+
+        async function playMusicSequence() {
+            isMusicPlaying = true;
+            setMusicButtonsDisabled(true);
+
+            for (let i = 0; i < musicSequence.length; i++) {
+                // Highlight sequence dot
+                const dot = document.getElementById('seqDot' + i);
+                if (dot) dot.classList.add('current');
+
+                // Light up button and play sound
+                await lightUpMusicButton(musicSequence[i], 400);
+
+                // Remove highlight
+                if (dot) {
+                    dot.classList.remove('current');
+                    dot.classList.add('active');
+                }
+
+                await sleep(100);
+            }
+
+            isMusicPlaying = false;
+            isMusicWaiting = true;
+            setMusicButtonsDisabled(false);
+            document.getElementById('musicStatus').textContent = '🎯 Giliranmu! Ulangi urutan nada.';
+        }
+
+        function lightUpMusicButton(index, duration) {
+            return new Promise(resolve => {
+                const btn = document.getElementById('musicBtn' + index);
+                btn.classList.add('lit');
+                playMusicNote(MUSIC_NOTES[index], duration / 1000);
+
+                setTimeout(() => {
+                    btn.classList.remove('lit');
+                    resolve();
+                }, duration);
+            });
+        }
+
+        function musicBtnClick(index) {
+            if (!isMusicWaiting || isMusicPlaying) return;
+
+            // Light up button
+            const btn = document.getElementById('musicBtn' + index);
+            btn.classList.add('lit');
+            playMusicNote(MUSIC_NOTES[index], 0.3);
+            setTimeout(() => btn.classList.remove('lit'), 200);
+
+            musicPlayerSequence.push(index);
+
+            // Check if correct
+            const currentIdx = musicPlayerSequence.length - 1;
+            if (musicPlayerSequence[currentIdx] !== musicSequence[currentIdx]) {
+                // Wrong!
+                document.getElementById('musicStatus').textContent = '❌ Salah! Urutan yang benar ditampilkan.';
+                setMusicButtonsDisabled(true);
+                
+                // Show correct sequence briefly
+                setTimeout(() => {
+                    playCorrectSequence();
+                }, 1000);
+                return;
+            }
+
+            // Check if completed this level
+            if (musicPlayerSequence.length === musicSequence.length) {
+                isMusicWaiting = false;
+                setMusicButtonsDisabled(true);
+                
+                correctScore++;
+                streakScore++;
+                updateScoreDisplay();
+                playSound('correct');
+                
+                document.getElementById('musicStatus').textContent = '✅ Benar! Level ' + musicLevel + ' selesai!';
+                document.getElementById('feedback').textContent = '🎉 Hebat! Lanjut ke level berikutnya...';
+                document.getElementById('feedback').className = 'feedback correct';
+
+                musicLevel++;
+                
+                setTimeout(() => {
+                    document.getElementById('feedback').textContent = '';
+                    nextMusicRound();
+                }, 1500);
+            }
+        }
+
+        function playCorrectSequence() {
+            // Briefly show and play the correct sequence
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i >= musicSequence.length) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        wrongScore++;
+                        streakScore = 0;
+                        updateScoreDisplay();
+                        finishMusicGame(false);
+                    }, 1000);
+                    return;
+                }
+                
+                const btn = document.getElementById('musicBtn' + musicSequence[i]);
+                btn.classList.add('lit');
+                playMusicNote(MUSIC_NOTES[musicSequence[i]], 0.3);
+                setTimeout(() => btn.classList.remove('lit'), 300);
+                i++;
+            }, 500);
+        }
+
+        function finishMusicGame(completed) {
+            const fb = document.getElementById('feedback');
+            
+            if (completed) {
+                fb.textContent = '🏆 Selamat! Kamu menyelesaikan semua ' + musicMaxLevel + ' level!';
+                fb.className = 'feedback correct';
+                streakScore = musicLevel;
+            } else {
+                fb.textContent = '💪 Coba lagi! Kamu sampai level ' + musicLevel;
+                fb.className = 'feedback incorrect';
+            }
+            
+            updateScoreDisplay();
+            
+            // Show next button
+            setTimeout(() => {
+                document.getElementById('nextBtn').style.display = 'block';
+            }, 1000);
+        }
+
+        function setMusicButtonsDisabled(disabled) {
+            for (let i = 0; i < 4; i++) {
+                document.getElementById('musicBtn' + i).disabled = disabled;
+            }
+        }
+
+        function playMusicNote(frequency, duration) {
+            if (!soundEnabled) return;
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                oscillator.frequency.value = frequency;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+                
+                oscillator.start(audioCtx.currentTime);
+                oscillator.stop(audioCtx.currentTime + duration);
+            } catch(e) {
+                console.log('Audio error:', e);
+            }
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
         // ============ ROUND END ============
         async function finishRound(){
             clearTimer();
@@ -1043,6 +1350,9 @@
         window.checkAnswer=checkAnswer;
         window.nextQuestion=nextQuestion;
         window.memoryCardClick=memoryCardClick;
+        window.startMemoryGame=startMemoryGame;
+        window.musicBtnClick=musicBtnClick;
+        window.startMusicMemory=startMusicMemory;
         window.showLeaderboard=showLeaderboard;
         window.closeLB=closeLB;
         window.showProgress=showProgress;
