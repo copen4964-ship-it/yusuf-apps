@@ -242,11 +242,13 @@
             display: flex; gap: 8px; justify-content: center; margin: 8px 0;
         }
         .sequence-dot {
-            width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.2);
+            width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,0.15);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.75em; font-weight: 800; color: transparent;
             transition: all 0.3s;
         }
-        .sequence-dot.active { background: #38ef7d; transform: scale(1.2); }
-        .sequence-dot.current { background: #ffd86f; transform: scale(1.3); }
+        .sequence-dot.active { background: #38ef7d; color: #0a2e1a; transform: scale(1.15); }
+        .sequence-dot.current { background: #ffd86f; color: #3a2a00; transform: scale(1.3); }
 
         /* Sound toggle */
         .sound-toggle {
@@ -370,7 +372,7 @@
                 <button class="mode-btn" onclick="setMode('multiply',event)">✖️ Kali</button>
                 <button class="mode-btn" onclick="setMode('divide',event)">➗ Bagi</button>
                 <button class="mode-btn" onclick="setMode('memory',event)">🧠 Memori</button>
-                <button class="mode-btn" onclick="setMode('music',event)">🎵 Musik</button>
+                <button class="mode-btn" onclick="setMode('music',event)">🔢 Simon Angka</button>
                 <button class="mode-btn active" onclick="setMode('random',event)">🎲 Acak</button>
             </div>
 
@@ -441,12 +443,12 @@
             <div class="music-memory-container" id="musicMemoryContainer" style="display:none">
                 <div class="music-memory-info" id="musicMemoryInfo">🎵 Music Memory</div>
                 <div class="music-memory-sequence" id="musicSequence"></div>
-                <div class="music-memory-status" id="musicStatus">Dengarkan urutan nada...</div>
+                <div class="music-memory-status" id="musicStatus">Perhatikan urutan angkanya...</div>
                 <div class="music-memory-grid" id="musicGrid">
-                    <button class="music-btn red" id="musicBtn0" onclick="musicBtnClick(0)" disabled>🎵</button>
-                    <button class="music-btn blue" id="musicBtn1" onclick="musicBtnClick(1)" disabled>🎶</button>
-                    <button class="music-btn green" id="musicBtn2" onclick="musicBtnClick(2)" disabled>🎸</button>
-                    <button class="music-btn yellow" id="musicBtn3" onclick="musicBtnClick(3)" disabled>🎹</button>
+                    <button class="music-btn red" id="musicBtn0" onclick="musicBtnClick(0)" disabled>1</button>
+                    <button class="music-btn blue" id="musicBtn1" onclick="musicBtnClick(1)" disabled>2</button>
+                    <button class="music-btn green" id="musicBtn2" onclick="musicBtnClick(2)" disabled>3</button>
+                    <button class="music-btn yellow" id="musicBtn3" onclick="musicBtnClick(3)" disabled>4</button>
                 </div>
             </div>
 
@@ -518,7 +520,7 @@
         const MODES = [
             {key:'add',label:'➕ Tambah'},{key:'subtract',label:'➖ Kurang'},
             {key:'multiply',label:'✖️ Kali'},{key:'divide',label:'➗ Bagi'},
-            {key:'memory',label:'🧠 Memori'},{key:'music',label:'🎵 Musik'},
+            {key:'memory',label:'🧠 Memori'},{key:'music',label:'🔢 Simon Angka'},
             {key:'random',label:'🎲 Acak'}
         ];
         const BADGES = [
@@ -1047,6 +1049,7 @@
         // ============ MUSIC MEMORY GAME ============
         const MUSIC_NOTES = [261.63, 329.63, 392.00, 523.25]; // C4, E4, G4, C5
         const MUSIC_COLORS = ['red', 'blue', 'green', 'yellow'];
+        const MUSIC_NUMBERS = [1, 2, 3, 4]; // angka makin besar = nada makin tinggi
         let musicSequence = [];
         let musicPlayerSequence = [];
         let musicLevel = 1;
@@ -1061,9 +1064,9 @@
             musicMaxLevel = 10;
 
             // Update UI
-            document.getElementById('question').textContent = '🎵 Music Memory!';
+            document.getElementById('question').textContent = '🔢 Simon Angka!';
             document.getElementById('emojiDisplay').textContent = '';
-            document.getElementById('hintText').textContent = 'Dengarkan dan ulangi urutan nada!';
+            document.getElementById('hintText').textContent = 'Lihat & dengar urutan angkanya, lalu ulangi!';
             document.getElementById('choiceButtons').innerHTML = '';
             document.getElementById('nextBtn').style.display = 'none';
             document.getElementById('feedback').textContent = '';
@@ -1084,7 +1087,7 @@
         }
 
         function updateMusicInfo() {
-            document.getElementById('musicMemoryInfo').textContent = '🎵 Level ' + musicLevel + '/' + musicMaxLevel;
+            document.getElementById('musicMemoryInfo').textContent = '🔢 Simon Angka - Level ' + musicLevel + '/' + musicMaxLevel;
         }
 
         function updateMusicSequence() {
@@ -1125,9 +1128,9 @@
             setMusicButtonsDisabled(true);
 
             for (let i = 0; i < musicSequence.length; i++) {
-                // Highlight sequence dot
+                // Highlight sequence dot and reveal its number
                 const dot = document.getElementById('seqDot' + i);
-                if (dot) dot.classList.add('current');
+                if (dot) { dot.textContent = MUSIC_NUMBERS[musicSequence[i]]; dot.classList.add('current'); }
 
                 // Light up button and play sound
                 await lightUpMusicButton(musicSequence[i], 400);
@@ -1144,7 +1147,7 @@
             isMusicPlaying = false;
             isMusicWaiting = true;
             setMusicButtonsDisabled(false);
-            document.getElementById('musicStatus').textContent = '🎯 Giliranmu! Ulangi urutan nada.';
+            document.getElementById('musicStatus').textContent = '🎯 Giliranmu! Ulangi urutan angkanya.';
         }
 
         function lightUpMusicButton(index, duration) {
@@ -1175,7 +1178,7 @@
             const currentIdx = musicPlayerSequence.length - 1;
             if (musicPlayerSequence[currentIdx] !== musicSequence[currentIdx]) {
                 // Wrong!
-                document.getElementById('musicStatus').textContent = '❌ Salah! Urutan yang benar ditampilkan.';
+                document.getElementById('musicStatus').textContent = '❌ Salah! Urutan angka yang benar ditampilkan.';
                 setMusicButtonsDisabled(true);
                 
                 // Show correct sequence briefly
