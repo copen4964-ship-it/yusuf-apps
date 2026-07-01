@@ -969,8 +969,8 @@
                     if(matchedPairs>=totalPairs){
                         fb.textContent='🎉 Semua pasangan cocok! '+memoryMoves+' langkah!';
                         fb.className='feedback correct';
-                        correctScore=matchedPairs;
-                        streakScore=matchedPairs;
+                        correctScore++;
+                        streakScore++;
                         updateScoreDisplay();
                         setTimeout(()=>{
                             document.getElementById('nextBtn').style.display='block';
