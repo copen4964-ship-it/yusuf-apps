@@ -267,6 +267,9 @@
         }
         .modal-content h2 { color: #fff; font-size: 1.3em; margin-bottom: 16px; text-align: center; }
         .lb-row { display: flex; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); font-size: 0.9em; }
+        .score-summary-title { color: rgba(255,255,255,0.55); font-size: 0.78em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin: 14px 0 6px; text-align: center; }
+        .score-summary { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 2px 10px; margin-bottom: 12px; max-height: 170px; overflow-y: auto; }
+        .score-summary .lb-row { font-size: 0.82em; padding: 8px 4px; }
         .lb-row:last-child { border: none; }
         .lb-pts { color: #38ef7d; font-weight: 800; }
         .modal-close {
@@ -339,6 +342,8 @@
                     <button class="user-btn" onclick="selectUser('Aisha')"><span class="u-emoji">👧</span>Aisha</button>
                     <button class="user-btn" onclick="selectUmum()"><span class="u-emoji">🌐</span>Umum</button>
                 </div>
+                <div class="score-summary-title">🏆 Skor Tertinggi</div>
+                <div class="score-summary" id="welcomeScoreSummary"></div>
                 <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
                     <button class="btn btn-ghost" onclick="backToHome()">🏠 Beranda</button>
                     <button class="btn btn-ghost" onclick="goToEnglish()">📚 English</button>
@@ -385,6 +390,9 @@
                 <span class="level-badge" id="levelBadge">Level 1</span>
             </div>
             <div class="question-counter" id="questionCounter">Soal 0/10</div>
+
+            <div class="score-summary-title">🏆 Skor Terbaikmu</div>
+            <div class="score-summary" id="menuScoreSummary"></div>
 
             <div class="float-btns">
                 <button class="float-btn" onclick="showLeaderboard()">🏆 High Score</button>
@@ -470,7 +478,7 @@
     <script type="module">
         // ============ FIREBASE IMPORTS ============
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-        import { getDatabase, ref, get, set } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+        import { getDatabase, ref, get, set, runTransaction } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSy...xfcw",
@@ -595,21 +603,52 @@
             }catch(e){}
             try{return JSON.parse(localStorage.getItem('yusuf_leaderboard'))||{}}catch(e){return {}}
         }
-        async function saveLeaderboard(lb){
-            try{await set(ref(db,'leaderboard'),lb)}catch(e){}
-            localStorage.setItem('yusuf_leaderboard',JSON.stringify(lb));
-            serverScores=lb;
-        }
-        let serverScores={};
         function getScoreKey(u,m,d){return u+'|'+m+'|'+d}
         async function updateLeaderboardScore(user,mode,diff,score){
-            const lb=await getLeaderboard();
             const key=getScoreKey(user,mode,diff);
-            if(!lb[key]||score>lb[key]){lb[key]=score;await saveLeaderboard(lb);}
+            // Atomic per-key transaction so two devices updating around the same
+            // time can't clobber each other's score (a whole-object read+write would).
+            try{
+                await runTransaction(ref(db,'leaderboard/'+key),current=>{
+                    if(current===null||score>current)return score;
+                    return; // abort: server value is already >= ours, keep it
+                });
+            }catch(e){}
+            try{
+                const lb=JSON.parse(localStorage.getItem('yusuf_leaderboard'))||{};
+                if(!lb[key]||score>lb[key]){lb[key]=score;localStorage.setItem('yusuf_leaderboard',JSON.stringify(lb));}
+            }catch(e){}
         }
         async function getHighScore(user,mode,diff){
             const lb=await getLeaderboard();
             return lb[getScoreKey(user,mode,diff)]||0;
+        }
+        function parseLbEntries(lb,filterUser){
+            const entries=[];
+            for(const key in lb){
+                const parts=key.split('|');
+                if(parts.length!==3)continue;
+                const[user,mode,diff]=parts;
+                if(filterUser&&user!==filterUser)continue;
+                entries.push({user,mode,diff,score:lb[key]});
+            }
+            return entries;
+        }
+        async function renderScoreSummary(containerId,filterUser,limit){
+            const el=document.getElementById(containerId);
+            if(!el)return;
+            const lb=await getLeaderboard();
+            const diffLabels={easy:'🌟',medium:'🌟🌟',hard:'🌟🌟🌟'};
+            const entries=parseLbEntries(lb,filterUser).sort((a,b)=>b.score-a.score).slice(0,limit||5);
+            if(!entries.length){
+                el.innerHTML='<p style="color:rgba(255,255,255,0.35);text-align:center;font-size:0.85em;padding:8px 0">Belum ada skor. Ayo bermain! 🎮</p>';
+                return;
+            }
+            el.innerHTML=entries.map(e=>{
+                const modeLabel=MODES.find(m=>m.key===e.mode)?.label||e.mode;
+                const who=filterUser?'':(EMOJIS[e.user]||'🌐')+' '+e.user+' | ';
+                return '<div class="lb-row"><span>'+who+modeLabel+' '+(diffLabels[e.diff]||'')+'</span><span class="lb-pts">'+e.score+' pts</span></div>';
+            }).join('');
         }
 
         // ============ NAVIGATION ============
@@ -634,11 +673,13 @@
             document.getElementById('greeting').textContent='Halo, '+emoji+' '+name+'! 👋';
             resetScores();
             playSound('click');
+            renderScoreSummary('menuScoreSummary',currentUser,5);
         }
         function backToWelcome(){
             clearTimer();
             document.getElementById('welcomeOverlay').classList.remove('hidden');
             resetScores();
+            renderScoreSummary('welcomeScoreSummary',null,5);
         }
         function backToMenu(){
             clearTimer();
@@ -646,6 +687,7 @@
             const emoji = EMOJIS[currentUser] || '🌐';
             document.getElementById('greeting').textContent='Halo, '+emoji+' '+currentUser+'! 👋';
             resetScores();
+            renderScoreSummary('menuScoreSummary',currentUser,5);
         }
         function backToHome(){window.location.href='index.html'}
         function goToEnglish(){window.location.href='belajar-english.html'}
@@ -1340,6 +1382,8 @@
             const saved=localStorage.getItem('yusuf_user');
             if(saved&&USERS.includes(saved)){
                 selectUser(saved);
+            }else{
+                renderScoreSummary('welcomeScoreSummary',null,5);
             }
         })();
 
