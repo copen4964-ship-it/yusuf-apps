@@ -1268,6 +1268,10 @@
                     document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('active'));
                     const diffBtns=document.querySelectorAll('.diff-btn');
                     if(diffBtns[currentLevel-1])diffBtns[currentLevel-1].classList.add('active');
+                    const modeLabel=MODES.find(m=>m.key===currentMode)?.label||currentMode;
+                    const diffLabel={easy:'🌟 Mudah',medium:'🌟🌟 Sedang',hard:'🌟🌟🌟 Sulit'}[currentDifficulty]||'';
+                    const emoji=EMOJIS[currentUser]||'🌐';
+                    document.getElementById('greeting2').textContent=emoji+' '+currentUser+' | '+modeLabel+(currentMode!=='memory'?' '+diffLabel:'');
                 }else{
                     fb.textContent+=' 🏆';
                 }
@@ -1277,10 +1281,11 @@
             }
             updateScoreDisplay();
 
-            // Don't auto-restart — go back to menu so user can choose
+            // Lanjut otomatis ke ronde berikutnya (level baru jika naik level)
             setTimeout(()=>{
                 clearTimer();
-                backToMenu();
+                resetScores();
+                nextQuestion();
             },3000);
         }
 
