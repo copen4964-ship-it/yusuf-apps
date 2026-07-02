@@ -605,51 +605,36 @@
             }catch(e){}
             try{return JSON.parse(localStorage.getItem('yusuf_leaderboard'))||{}}catch(e){return {}}
         }
-        function getScoreKey(u,m,d){return u+'|'+m+'|'+d}
-        async function updateLeaderboardScore(user,mode,diff,score){
-            const key=getScoreKey(user,mode,diff);
-            // Atomic per-key transaction so two devices updating around the same
-            // time can't clobber each other's score (a whole-object read+write would).
+        async function addLeaderboardPoints(user,points){
+            // Accumulated total per user: Level 1 round = +1, Level 2 = +2, Level 3 = +3.
+            // Atomic transaction so two devices scoring around the same time both land
+            // (a plain read+write could drop one device's update).
             try{
-                await runTransaction(ref(db,'leaderboard/'+key),current=>{
-                    if(current===null||score>current)return score;
-                    return; // abort: server value is already >= ours, keep it
-                });
+                await runTransaction(ref(db,'leaderboard/'+user),current=>(current||0)+points);
             }catch(e){}
             try{
                 const lb=JSON.parse(localStorage.getItem('yusuf_leaderboard'))||{};
-                if(!lb[key]||score>lb[key]){lb[key]=score;localStorage.setItem('yusuf_leaderboard',JSON.stringify(lb));}
+                lb[user]=(lb[user]||0)+points;
+                localStorage.setItem('yusuf_leaderboard',JSON.stringify(lb));
             }catch(e){}
         }
-        async function getHighScore(user,mode,diff){
-            const lb=await getLeaderboard();
-            return lb[getScoreKey(user,mode,diff)]||0;
-        }
         function parseLbEntries(lb,filterUser){
-            const entries=[];
-            for(const key in lb){
-                const parts=key.split('|');
-                if(parts.length!==3)continue;
-                const[user,mode,diff]=parts;
-                if(filterUser&&user!==filterUser)continue;
-                entries.push({user,mode,diff,score:lb[key]});
-            }
-            return entries;
+            return Object.keys(lb)
+                .filter(u=>!u.includes('|')) // ignore leftover keys from the old per-mode|diff scoring scheme
+                .filter(u=>!filterUser||u===filterUser)
+                .map(u=>({user:u,score:lb[u]}));
         }
         async function renderScoreSummary(containerId,filterUser,limit){
             const el=document.getElementById(containerId);
             if(!el)return;
             const lb=await getLeaderboard();
-            const diffLabels={easy:'🌟',medium:'🌟🌟',hard:'🌟🌟🌟'};
             const entries=parseLbEntries(lb,filterUser).sort((a,b)=>b.score-a.score).slice(0,limit||5);
             if(!entries.length){
                 el.innerHTML='<p style="color:rgba(255,255,255,0.35);text-align:center;font-size:0.85em;padding:8px 0">Belum ada skor. Ayo bermain! 🎮</p>';
                 return;
             }
             el.innerHTML=entries.map(e=>{
-                const modeLabel=MODES.find(m=>m.key===e.mode)?.label||e.mode;
-                const who=filterUser?'':(EMOJIS[e.user]||'🌐')+' '+e.user+' | ';
-                return '<div class="lb-row"><span>'+who+modeLabel+' '+(diffLabels[e.diff]||'')+'</span><span class="lb-pts">'+e.score+' pts</span></div>';
+                return '<div class="lb-row"><span>'+(EMOJIS[e.user]||'🌐')+' '+e.user+'</span><span class="lb-pts">'+e.score+' pts</span></div>';
             }).join('');
         }
 
@@ -1291,7 +1276,7 @@
         async function finishRound(){
             clearTimer();
             await recordSession(currentUser,correctScore,wrongScore,currentMode,currentDifficulty);
-            await updateLeaderboardScore(currentUser,currentMode,currentDifficulty,correctScore);
+            await addLeaderboardPoints(currentUser,currentLevel);
 
             const fb=document.getElementById('feedback');
             document.getElementById('question').textContent='🎉 Ronde Selesai!';
@@ -1337,21 +1322,17 @@
         // ============ LEADERBOARD ============
         async function showLeaderboard(){
             const lb=await getLeaderboard();
+            const entries=parseLbEntries(lb,null).sort((a,b)=>b.score-a.score);
             let html='';
-            let hasData=false;
-            for(const user of USERS){
-                for(const mode of MODES){
-                    for(const diff of ['easy','medium','hard']){
-                        const key=getScoreKey(user,mode.key,diff);
-                        if(lb[key]){
-                            hasData=true;
-                            const dl={easy:'🌟',medium:'🌟🌟',hard:'🌟🌟🌟'}[diff];
-                            html+='<div class="lb-row"><span>'+EMOJIS[user]+' '+user+' | '+mode.label+' '+dl+'</span><span class="lb-pts">'+lb[key]+' pts</span></div>';
-                        }
-                    }
-                }
+            if(!entries.length){
+                html='<p style="color:rgba(255,255,255,0.4);text-align:center">Belum ada skor. Ayo bermain! 🎮</p>';
+            }else{
+                const medals=['🥇','🥈','🥉'];
+                html=entries.map((e,i)=>{
+                    const rank=medals[i]||('#'+(i+1));
+                    return '<div class="lb-row"><span>'+rank+' '+(EMOJIS[e.user]||'🌐')+' '+e.user+'</span><span class="lb-pts">'+e.score+' pts</span></div>';
+                }).join('');
             }
-            if(!hasData)html='<p style="color:rgba(255,255,255,0.4);text-align:center">Belum ada skor. Ayo bermain! 🎮</p>';
             document.getElementById('lbContent').innerHTML=html;
             document.getElementById('lbModal').classList.add('show');
         }
